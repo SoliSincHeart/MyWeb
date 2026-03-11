@@ -1,0 +1,313 @@
+			
+			html {
+				box-sizing: border-box;
+			}
+
+			* {
+				margin: 0;
+				padding: 0;
+				border: 0;
+				outline: none;
+				box-sizing: inherit;
+			}
+
+			body {
+				font-family: 微软雅黑, 华文黑体, arial;
+				font-weight: bold;
+				background-image: url(../img/雨林.png);
+				background-repeat: no-repeat;
+				background-size: cover;
+			}
+
+			.con {
+				text-align: center;
+				position: relative;
+				top: 50px;
+				font-weight: bolder;
+				font-size: 200px;
+				font-weight: bolder;
+				color:rgb(112,173,255);
+				font-family: 'Silver';
+				src: url('../font/Silver.ttf') format('ttf');
+			}
+
+			form {
+				margin: 108px auto;
+				border: 3px solid deepskyblue;
+				border-radius: 5px;
+				overflow: hidden;
+				width: 600px;
+				height: 650px;
+				position: relative;
+				top: 30%;
+				display: flex;
+				background-color: white;
+			}
+			form,[placeholder]{
+				background: rgba(255, 255, 255, 0.15);
+				backdrop-filter: blur(12px) saturate(180%);
+				-webkit-backdrop-filter: blur(12px) saturate(180%);
+				
+				border: 1px solid rgba(255,255,255,0.125);
+				box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+				backdrop-filter: blur(15px);
+			}
+			ul,
+			li {
+				margin: 0;
+				padding: 0;
+				list-style: none;
+				font-family: Arial, sans-serif;
+				display: block;
+			}
+
+			form ul {
+				display: flex;
+			}
+
+			.left {
+				width: 400px;
+				height: 450px;
+				position: absolute;
+				left: 0;
+			}
+
+			.right {
+				width: 100%;
+				position: absolute;
+				right: 0;
+			}
+
+			[type=text]:hover {
+				border: 3px solid deepskyblue;
+			}
+
+			[type=password]:hover {
+				border: 3px solid deepskyblue;
+			}
+
+			.choose {
+				margin-bottom: 60px;
+				
+			}
+
+			.choose a {
+				text-decoration: none;
+				font-size: 30px;
+				text-align: center;
+				font-weight: bolder;
+				display: block;
+				width: 100%;
+				line-height: 80px;
+				
+			}
+
+			.choose a:hover {
+				color: skyblue;
+			}
+
+			.choose li {
+				height: 60%;
+				flex: 1;
+				text-align: center;
+				
+			}
+
+
+
+			.input-group {
+				position: relative;
+				margin: 20px 0;
+				width: 0;
+			}
+	 
+			.text-icon,
+			.password-icon {
+				position: absolute;
+				left: 3.6rem;  
+				top: 52%;
+				transform: translateY(-50%);
+				width: 50px;
+				height: 50px;
+				pointer-events: none;
+				z-index: 1;
+				
+			}
+
+			[placeholder],
+			[type=submit] {
+				width: 500px;
+				height: 60px;
+				border-radius: 8px;
+				margin: 16px 0 16px 50px;
+				line-height: 40px;
+				font-size: 25px;
+				font-weight: bolder;
+			}
+
+			[placeholder] {
+				padding: 9px 0 9px 9px;
+				border: 3px solid #CCC;
+			}
+
+			.password-input,
+			.text-input {
+				padding-left: 60px;
+			}
+
+			.checkbox {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: 400px;
+				margin: 9.999984px auto;
+			}
+
+			.checkbox label {
+				display: flex;
+				align-items: center;
+				cursor: pointer;
+				font-size: 25px;
+			}
+
+			.checkbox input[type="checkbox"] ,
+			.agreement input[type="checkbox"]{
+				margin-right: 10.8px;
+				width: 20px;
+				height: 20px;
+			}
+
+			.checkbox a {
+				text-decoration: none;
+				color: royalblue;
+				font-size: 25px;
+			}
+
+			.checkbox a:hover {
+				color: orange;
+			}
+
+			
+
+			[type=submit] {
+				border: 2px solid #333;
+				background-color: deepskyblue;
+				color: white;
+				font-weight: bold;
+				opacity: 0.8;
+				box-shadow: 2px 4px #333;
+				text-shadow: 1px 1px 0 #333;
+			}
+
+			[type=submit]:hover {
+				opacity: 1;
+			}
+
+			[type=submit]:active {
+				box-shadow: none;
+				transform: translate(4px, 4px);
+				transition:all 0.15s; 
+			}
+
+			.agreement {
+				text-align: center;
+				margin: 5px auto;
+				margin-top: 50px;
+			}
+
+			.agreement a {
+				text-decoration: none;
+				color: royalblue;
+				font-size: 25px;
+			}
+
+			.agreement label {
+				font-size: 25px;
+			}
+
+			.agreement a:hover {
+				color: orange;
+			}
+
+			@media (max-width: 600px) {
+				form {
+					width: 90%;
+					height: 65vh;
+				}
+
+				.con {
+					font-size: 7vh;
+					margin: 2vh auto;
+
+				}
+
+				.choose a {
+					font-size: 3vh;
+					line-height: 8vh;
+				}
+				.choose{
+					margin-bottom: 40px;
+				}
+				.choose li{
+					height:8vh;
+				}
+				.input-group {
+					width: 90%;
+					margin: 2vh 0 2vh 5%;
+				}
+
+				.text-icon,
+				.password-icon {
+					left: 2.6vh;
+					width:6vh;
+					height:6vh;
+				}
+				[placeholder] {
+					padding-left: 6vh;
+					
+				}
+
+				[placeholder],
+				[type=submit] {
+					height: 8vh;
+					width: 90%;
+					line-height: 6vh;
+					font-size: 2vh;
+					margin: 0.5vh 5% 0.5vh 5%;
+				}
+
+				.checkbox {
+					width: 80%;
+				}
+				.checkbox a{
+					font-size: 3vh;
+				}
+				.checkbox label{
+					font-size: 3vh;
+				}
+
+				.checkbox input[type="checkbox"],
+				.agreement input[type="checkbox"]{
+					width: 2.4vh;
+					height: 2.4vh;
+					margin-right:1vh;
+				}
+
+				[type=submit] {
+					height: 6vh;
+					font-size: 3vh;
+					width:80%;
+					margin-left:10%;
+					}
+
+				.agreement a {
+					font-size: 2.5vh;
+				}
+
+				.agreement label {
+					font-size: 2.5vh;
+				}
+				.agreement{
+					margin-top: 5vh;
+				}
+			}

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            text-decoration: none;
+        }
+
+        /* 导航栏容器 */
+        .nav-container {
+            width: 100%;
+            background: #333;
+            position: relative;
+        }
+
+        /* 一级导航 */
+        .nav {
+            display: flex;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 一级菜单项 */
+        .nav-item {
+            position: relative;
+            padding: 15px 25px;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .nav-item:hover {
+            background: #555;
+        }
+
+        /* 二级导航容器 */
+        .subnav {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            min-width: 150px;
+            background: #444;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* 悬停时显示二级菜单 */
+        .nav-item:hover .subnav {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* 二级菜单项 */
+        .subnav-item {
+            padding: 12px 20px;
+            color: #eee;
+            display: block;
+            transition: all 0.2s;
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: subItemSlide 0.3s forwards;
+        }
+
+        .subnav-item:hover {
+            background: #666;
+        }
+
+        /* 子菜单项依次动画 */
+        .subnav li:nth-child(1) .subnav-item { animation-delay: 0.05s }
+        .subnav li:nth-child(2) .subnav-item { animation-delay: 0.1s }
+        .subnav li:nth-child(3) .subnav-item { animation-delay: 0.15s }
+
+        @keyframes subItemSlide {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-container">
+        <ul class="nav">
+            <li class="nav-item">
+                首页
+                <ul class="subnav">
+                    <li><a href="#" class="subnav-item">子菜单1</a></li>
+                    <li><a href="#" class="subnav-item">子菜单2</a></li>
+                    <li><a href="#" class="subnav-item">子菜单3</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                产品
+                <ul class="subnav">
+                    <li><a href="#" class="subnav-item">产品分类1</a></li>
+                    <li><a href="#" class="subnav-item">产品分类2</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                关于我们
+                <ul class="subnav">
+                    <li><a href="#" class="subnav-item">公司介绍</a></li>
+                    <li><a href="#" class="subnav-item">联系我们</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</body>
+</html>
