@@ -1,6 +1,7 @@
 			
 			html {
 				box-sizing: border-box;
+				height: 100%;
 			}
 
 			* {
@@ -12,11 +13,14 @@
 			}
 
 			body {
+				height: 100%;
 				font-family: 微软雅黑, 华文黑体, arial;
 				font-weight: bold;
 				background-image: url(../img/雨林.png);
 				background-repeat: no-repeat;
-				background-size: cover;
+				background-size: contain;
+				background-position: center;
+				background-color: #000;
 			}
 
 			.con {
@@ -28,7 +32,7 @@
 				font-weight: bolder;
 				color:rgb(112,173,255);
 				font-family: 'Silver';
-				src: url('../font/Silver.ttf') format('ttf');
+				src: url('../font/Silver.ttf');
 			}
 
 			form {
