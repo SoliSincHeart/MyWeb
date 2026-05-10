@@ -8,35 +8,44 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import java.io.IOException;
 import java.io.BufferedReader;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 @WebServlet("/draft")
 public class DraftServlet extends HttpServlet {
 
-    // 处理GET请求：从session获取草稿
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/plain; charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        HttpSession session = request.getSession();
-
-
-        Object draft = session.getAttribute("draft");
-        if (draft == null) {
-            response.getWriter().write("无内容");
-        } else {
-            response.getWriter().write("草稿内容：" + draft.toString());
-        }
-    }
-
-    // 处理POST请求：简单存一个字符串到session
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/plain; charset=UTF-8");
+        response.setContentType("application/json; charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
-        HttpSession session = request.getSession();
-        // 暂时不管前端传什么，直接写死一个字符串
-        session.setAttribute("draft", "hello session!");
 
-        response.getWriter().write("post ok");
+        HttpSession session = request.getSession();
+
+        StringBuilder sb = new StringBuilder();
+        String line;
+        BufferedReader reader = request.getReader();
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+        String json = sb.toString();
+
+        Gson gson = new Gson();
+        JsonObject draftObj = gson.fromJson(json, JsonObject.class);
+
+        session.setAttribute("draft", draftObj);
+
+        response.getWriter().write("{\"info\":\"保存草稿成功\"}");
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        HttpSession session = request.getSession();
+        Object draft = session.getAttribute("draft");
+        String output = (draft == null) ? "{\"info\":\"无内容\"}" : draft.toString();
+
+        response.getWriter().write(output);
     }
 }
