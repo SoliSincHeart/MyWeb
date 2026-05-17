@@ -1,11 +1,24 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: hyb
+  Date: 2026/5/14
+  Time: 12:36
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Dialog日志同步演示 test1</title>
-    <link rel="stylesheet" href="css/log.css">
+    <title>原生dialog上下错开</title>
     <style>
+        /* ========== 原有 CSS 完全保留，未作任何修改 ========== */
+        button, .arrow_btn, .action_btn, .modal_buttons button {
+            user-select: none;
+            -webkit-user-select: none;  /* Safari 兼容 */
+            cursor: pointer;            /* 保持点击手感 */
+        }
+
         dialog {
             border-radius: 12px;
             border: none;
@@ -15,78 +28,234 @@
             left: 50%;
             transform: translateX(-50%);
         }
-        #show_log { top: 10%; }
-        .log_viewer { width: 400px; max-width: 80vw; padding: 16px; }
+
+        #show_log {
+            top: 10%;
+        }
+
+        .log_viewer {
+            width: 400px;
+            max-width: 80vw;
+            padding: 16px;
+        }
+
         .log_header {
-            display: flex; justify-content: space-between; align-items: baseline;
-            margin-bottom: 20px; font-size: 0.9rem; color: #334155;
-            border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
         }
-        .log_time_display, .log_counter, .log_content_preview {
-            outline: none !important;
-            user-select: text;
-            cursor: default;
+        .log_time_display {
+            font-weight: 600;
+            font-size: 1rem;
         }
-        .log_time_display:focus, .log_counter:focus, .log_content_preview:focus {
-            outline: none;
+        .log_counter {
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
         }
-        .log_body { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+
+        .log_body {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
         .arrow_btn {
-            background: #f1f5f9; border: none; font-size: 1.5rem; width: 36px; height: 36px;
-            border-radius: 50%; cursor: pointer; transition: 0.2s;
+            background: #f1f5f9;
+            border: none;
+            font-size: 1.5rem;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .arrow_btn:hover { background: #cbd5e1; }
-        .arrow_btn:active { transform: scale(0.95); }
+        .arrow_btn:hover {
+            background: #cbd5e1;
+        }
+        .arrow_btn:active {
+            transform: scale(0.95);
+        }
         .log_content_preview {
-            flex: 1; background: #f8fafc; border-radius: 16px; padding: 16px; min-height: 120px;
-            word-wrap: break-word; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.4;
+            flex: 1;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px;
+            min-height: 120px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
+
         .log_actions {
-            display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid #e2e8f0; padding-top: 16px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 16px;
         }
-        .action_btn { padding: 6px 16px; border-radius: 40px; border: none; background-color: #3b82f6; color: white; cursor: pointer; }
-        .action_btn.secondary { background-color: #e2e8f0; color: #1e293b; }
-        #edit_log { top: 30%; height: 50%; }
-        .modal_overlay { top: 0; left: 0; width: 100%; height: 100%; justify-content: center; align-items: center; z-index: 1000; }
-        .edit_modal { background: white; border-radius: 28px; width: 500px; max-width: 90%; padding: 24px; }
-        .edit_modal h3 { margin-top: 0; margin-bottom: 18px; font-size: 1.5rem; font-weight: 600; }
-        .edit_modal label { font-weight: 500; display: block; margin: 12px 0 6px; color: #0f172a; }
+        .action_btn {
+            padding: 6px 16px;
+            border-radius: 40px;
+            border: none;
+            background-color: #3b82f6;
+            color: white;
+            cursor: pointer;
+        }
+        .action_btn.secondary {
+            background-color: #e2e8f0;
+            color: #1e293b;
+        }
+
+
+        #edit_log {
+            top: 30%;
+            height:50%;
+        }
+
+        .modal_overlay {
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .edit_modal {
+            background: white;
+            border-radius: 28px;
+            width: 500px;
+            max-width: 90%;
+            padding: 24px;
+        }
+        /* 动画未实现 */
+        /* 		@keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(12px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                } */
+
+        .edit_modal h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .edit_modal label {
+            font-weight: 500;
+            display: block;
+            margin: 12px 0 6px;
+            color: #0f172a;
+        }
+        /*	标题和正文 */
         .edit_modal input, .edit_modal textarea {
-            width: 90%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 16px;
-            font-family: inherit; font-size: 0.95rem; transition: 0.2s;
+            width: 90%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: 0.2s;
         }
-        .edit_modal input:focus, .edit_modal textarea:focus { outline: none; border-color: #3b82f6; }
-        .edit_modal textarea { min-height: 100px; resize: vertical; }
-        .modal_buttons { display: flex; justify-content: flex-end; gap: 12px; margin-top: 50px; }
-        .modal_buttons button { padding: 8px 20px; border-radius: 40px; border: none; font-weight: 500; cursor: pointer; transition: 0.2s; }
-        .save_btn { background-color: #3b82f6; color: white; }
-        .save_btn:hover { background-color: #2563eb; }
-        .cancel_btn { background-color: #e2e8f0; color: #1e293b; }
-        .cancel_btn:hover { background-color: #cbd5e1; }
+        .edit_modal input:focus, .edit_modal textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .edit_modal textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal_buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 50px;
+        }
+
+        .modal_buttons button {
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .save_btn {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .save_btn:hover {
+            background-color: #2563eb;
+        }
+
+        .cancel_btn {
+            background-color: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .cancel_btn:hover {
+            background-color: #cbd5e1;
+        }
+
+        /* 鼠标点击也会触发 focus：这里不显示任何焦点效果 */
+        dialog .arrow_btn:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        /* 键盘 Tab 导航时才显示正常的焦点环 */
+        dialog .arrow_btn:focus-visible {
+            outline: 2px solid #3b82f6 !important;
+            outline-offset: 2px !important;
+            box-shadow: none !important;
+        }
     </style>
 </head>
 <body>
-<a href="test2.jsp">这里是test1（点击切换页面）</a>
-<button id="mg_log">管理日志</button>
+<a href="test2.jsp">这里是第一个网站</a>
+<!-- 关键修复：为按钮添加 type="button" 避免表单提交或焦点移动 -->
+<button type="button" id="mg_log">随身日志</button>
+
 <dialog id="show_log">
     <div class="log_viewer">
         <div class="log_header">
-            <span class="log_time_display" tabindex="-1">暂无日志</span>
-            <button class="arrow_btn left_arrow">◀</button>
-            <span class="log_counter" tabindex="-1">0 / 0</span>
-            <button class="arrow_btn right_arrow">▶</button>
+            <span class="log_time_display">暂无日志</span>
+            <!-- 为左右箭头添加 type="button" -->
+            <button type="button" class="arrow_btn left_arrow">◀</button>
+            <span class="log_counter">0 / 0</span>
+            <button type="button" class="arrow_btn right_arrow">▶</button>
         </div>
         <div class="log_body">
-            <div class="log_content_preview" tabindex="-1">
+            <div class="log_content_preview">
                 这里展示日志正文内容
             </div>
         </div>
         <div class="log_actions">
-            <button id="openedit_log" class="action_btn">打开第二个弹窗</button>
-            <button id="closeFirstDialog" class="action_btn secondary">关闭本弹窗</button>
+            <!-- 为按钮添加 type="button" -->
+            <button type="button" id="add_log" class="action_btn">添加日志</button>
+            <button type="button" id="closeFirstDialog" class="action_btn secondary">关闭本弹窗</button>
         </div>
     </div>
 </dialog>
+
 <dialog id="edit_log" >
     <div id="logModal" class="modal_overlay">
         <div class="edit_modal">
@@ -96,153 +265,246 @@
             <label>正文</label>
             <textarea id="logContentInput" placeholder="写点什么..."></textarea>
             <div class="modal_buttons">
-                <button class="cancel_btn" id="cancelModalBtn">取消</button>
-                <button class="save_btn" id="saveModalBtn">保存</button>
+                <!-- 为模态框按钮添加 type="button" -->
+                <button type="button" class="cancel_btn" id="cancelModalBtn">取消</button>
+                <button type="button" class="save_btn" id="saveModalBtn">保存</button>
             </div>
         </div>
     </div>
 </dialog>
+
 <script>
-    // 日志数据和本地操作
-    const show_log = document.getElementById('show_log');
-    const edit_log = document.getElementById('edit_log');
-    const mg_log = document.getElementById('mg_log');
-    const openedit_log = document.getElementById('openedit_log');
-    const closeFirstBtn = document.getElementById('closeFirstDialog');
-    const cancelModalBtn = document.getElementById('cancelModalBtn');
-    const saveModalBtn = document.getElementById('saveModalBtn');
+    // ========== 修复：使用 IIFE 隔离作用域，防止 JSP 环境全局污染 ==========
+    (function() {
+        // DOM 元素
+        const show_log = document.getElementById('show_log');
+        const edit_log = document.getElementById('edit_log');
+        const mg_log = document.getElementById('mg_log');
+        const add_log = document.getElementById('add_log');
+        const closeFirstBtn = document.getElementById('closeFirstDialog');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const saveModalBtn = document.getElementById('saveModalBtn');
 
-    const logTimeDisplay = document.querySelector('.log_time_display');
-    const logContentPreview = document.querySelector('.log_content_preview');
-    const logCounter = document.querySelector('.log_counter');
-    const leftArrow = document.querySelector('.left_arrow');
-    const rightArrow = document.querySelector('.right_arrow');
+        const logTimeDisplay = document.querySelector('.log_time_display');
+        const logContentPreview = document.querySelector('.log_content_preview');
+        const logCounter = document.querySelector('.log_counter');
+        const leftArrow = document.querySelector('.left_arrow');
+        const rightArrow = document.querySelector('.right_arrow');
 
-    const logTimeInput = document.getElementById('logTimeInput');
-    const logContentInput = document.getElementById('logContentInput');
+        const logTimeInput = document.getElementById('logTimeInput');
+        const logContentInput = document.getElementById('logContentInput');
 
-    // 日志数据
-    let logsData = [
-        {
-            time: "2026-05-09T14:30:00",
-            content: "今天初次实现了原生dialog上下错开，样式用下划线命名统一。"
-        },
-        {
-            time: "2026-05-08T09:15:00",
-            content: "解决弹窗联动中的数据同步问题，使用数据驱动视图。"
+        // 数据（内存存储）- 确保是数组且不被外部覆盖
+        let logsData = [
+            {
+                time: "2026-05-09T14:30:00",
+                content: "今天初次实现了原生dialog上下错开，样式用下划线命名统一。"
+            },
+            {
+                time: "2026-05-08T09:15:00",
+                content: "解决弹窗联动中的数据同步问题，使用数据驱动视图。"
+            }
+        ];
+        let currentLogIndex = 0;
+
+        // ====== 渲染函数（增强防御，修复计数显示异常） ======
+        function renderCurrentLog() {
+            // 防御：确保 logsData 是数组且长度有效
+            if (!Array.isArray(logsData) || logsData.length === 0) {
+                if (logTimeDisplay) logTimeDisplay.textContent = '暂无日志';
+                if (logContentPreview) logContentPreview.textContent = '没有日志，请点击"添加日志"添加';
+                if (logCounter) logCounter.textContent = '0 / 0';
+                return;
+            }
+
+            // 边界保护
+            if (currentLogIndex >= logsData.length) currentLogIndex = logsData.length - 1;
+            if (currentLogIndex < 0) currentLogIndex = 0;
+
+            const log = logsData[currentLogIndex];
+            if (!log) return;
+
+            const formattedTime = log.time.replace('T', ' ');
+            logTimeDisplay.textContent = formattedTime;
+            logContentPreview.textContent = log.content;
+            // 关键修复：确保分母显示正确（logsData.length 一定存在）
+            logCounter.textContent = (currentLogIndex + 1) + " / " + logsData.length;
         }
-    ];
-    let currentLogIndex = 0;
 
-    function renderCurrentLog() {
-        if (!logsData.length) {
-            logTimeDisplay.textContent = '暂无日志';
-            logContentPreview.textContent = '没有日志，请点击"打开第二个弹窗"添加';
-            logCounter.textContent = '0 / 0';
-            document.activeElement.blur();
-            return;
+        // ====== 切换 ======
+        function prevLog() {
+            if (!logsData.length) return;
+            currentLogIndex = (currentLogIndex - 1 + logsData.length) % logsData.length;
+            renderCurrentLog();
         }
-        if (currentLogIndex >= logsData.length) currentLogIndex = logsData.length - 1;
-        if (currentLogIndex < 0) currentLogIndex = 0;
-        const log = logsData[currentLogIndex];
-        const formattedTime = log.time.replace('T', ' ');
-        logTimeDisplay.textContent = formattedTime;
-        logContentPreview.textContent = log.content;
-        logCounter.textContent = `${currentLogIndex + 1} / ${logsData.length}`;
-        document.activeElement.blur();
-    }
 
-    function prevLog() {
-        if (!logsData.length) return;
-        currentLogIndex = (currentLogIndex - 1 + logsData.length) % logsData.length;
+        function nextLog() {
+            if (!logsData.length) return;
+            currentLogIndex = (currentLogIndex + 1) % logsData.length;
+            renderCurrentLog();
+        }
+
+        // ====== 添加新日志 ======
+        function addNewLog(timeValue, contentValue) {
+            if (!timeValue || !contentValue.trim()) {
+                alert("请填写完整的时间和正文内容");
+                return false;
+            }
+            logsData.unshift({
+                time: timeValue,
+                content: contentValue.trim()
+            });
+            currentLogIndex = 0;
+            if (show_log.open) renderCurrentLog();
+            return true;
+        }
+
+        // ====== 事件绑定（所有按钮均已添加 type="button"） ======
+        if (leftArrow) leftArrow.addEventListener('click', prevLog);
+        if (rightArrow) rightArrow.addEventListener('click', nextLog);
+
+        if (saveModalBtn) {
+            saveModalBtn.addEventListener('click', () => {
+                const newTime = logTimeInput.value;
+                const newContent = logContentInput.value;
+                if (addNewLog(newTime, newContent)) {
+                    edit_log.close();
+                    if (show_log.open) renderCurrentLog();
+                }
+            });
+        }
+
+        if (mg_log) {
+            mg_log.addEventListener('click', () => {
+                show_log.showModal();
+                renderCurrentLog();
+            });
+        }
+
+        if (add_log) {
+            add_log.addEventListener('click', () => {
+                edit_log.showModal();
+            });
+        }
+
+        if (closeFirstBtn) {
+            closeFirstBtn.addEventListener('click', () => {
+                show_log.close();
+            });
+        }
+
+        if (cancelModalBtn) {
+            cancelModalBtn.addEventListener('click', () => {
+                edit_log.close();
+            });
+        }
+
+        // 初始渲染
         renderCurrentLog();
-    }
-    function nextLog() {
-        if (!logsData.length) return;
-        currentLogIndex = (currentLogIndex + 1) % logsData.length;
-        renderCurrentLog();
-    }
-    function addNewLog(timeValue, contentValue) {
-        if (!timeValue || !contentValue.trim()) {
-            alert("请填写完整的时间和正文内容");
-            return false;
+
+        // ========= 1) DraftServlet 地址：你只需要在这里改成你 web.xml/@WebServlet 的 url-pattern =========
+        // 例如 web.xml: <url-pattern>/draft</url-pattern>  =>  '/draft'
+        // 或 @WebServlet("/draft") => '/draft'
+        const DRAFT_API_CANDIDATES = [
+            (location.pathname.replace(/\/[^\/]*$/, '')) + '/draft',
+            (location.pathname.replace(/\/[^\/]*$/, '')) + '/DraftServlet'
+        ];
+
+        async function detectDraftApi() {
+            for (const url of DRAFT_API_CANDIDATES) {
+                try {
+                    const r = await fetch(url, { method: 'GET', credentials: 'same-origin' });
+                    if (r.ok) return url;
+                } catch (_) {}
+            }
+            // 实在探测不到就用第一个（你随后把 candidates 改准即可）
+            return DRAFT_API_CANDIDATES[0];
         }
-        logsData.unshift({
-            time: timeValue,
-            content: contentValue.trim()
+
+        let DRAFT_API = null;
+
+        async function saveDraft() {
+            if (!DRAFT_API) DRAFT_API = await detectDraftApi();
+
+            const payload = {
+                time: logTimeInput.value || null,
+                content: logContentInput.value || ""
+            };
+
+            await fetch(DRAFT_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+                body: JSON.stringify(payload),
+                credentials: 'same-origin' // 关键：带上 JSESSIONID，让 servlet 用同一个 session
+            });
+        }
+
+        async function loadDraftToInputs() {
+            if (!DRAFT_API) DRAFT_API = await detectDraftApi();
+
+            const r = await fetch(DRAFT_API, { credentials: 'same-origin' });
+            if (!r.ok) return;
+
+            const data = await r.json();
+            if (data && data.time != null) logTimeInput.value = data.time;
+            if (data && data.content != null) logContentInput.value = data.content;
+        }
+
+        // ========= 2) 打开“添加日志”弹窗时：自动把草稿恢复到输入框 =========
+        // 你原来的 add_log 点击事件是：edit_log.showModal();
+        // 这里不改样式，只在 showModal() 前插入恢复逻辑
+        add_log.addEventListener('click', async () => {
+            await loadDraftToInputs();
+            edit_log.showModal();
         });
-        currentLogIndex = 0;
-        if (show_log.open) renderCurrentLog();
-        return true;
-    }
-    leftArrow.addEventListener('click', prevLog);
-    rightArrow.addEventListener('click', nextLog);
-    mg_log.addEventListener('click', () => {
-        show_log.showModal();
-        renderCurrentLog();
-    });
-    closeFirstBtn.addEventListener('click', () => {
-        show_log.close();
-    });
 
-    // 后端 session 草稿自动化
-    let draftTimer = null;
-    function debounceSaveDraft() {
-        clearTimeout(draftTimer);
-        draftTimer = setTimeout(() => {
-            saveDraftToServer().catch(err => console.error("saveDraftToServer failed:", err));
-        }, 300);
-    }
-    async function saveDraftToServer() {
-        const time = logTimeInput.value || "";
-        const content = logContentInput.value || "";
-        if (!time && !content.trim()) return;
-        await fetch("draft", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ time, content })
-        });
-    }
-    async function loadDraftFromServer() {
-        const res = await fetch("draft", { method: "GET" });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (!data) return;
-        if (typeof data.time === "string" && data.time) logTimeInput.value = data.time;
-        if (typeof data.content === "string" && data.content) logContentInput.value = data.content;
-    }
-    async function clearDraftOnServer() {
-        await fetch("draft", { method: "DELETE" });
-    }
-    logTimeInput.addEventListener("input", debounceSaveDraft);
-    logContentInput.addEventListener("input", debounceSaveDraft);
-
-    // 打开编辑弹窗时，拉取草稿
-    openedit_log.addEventListener('click', async () => {
-        await loadDraftFromServer();
-        edit_log.showModal();
-        setTimeout(() => logContentInput.focus(), 0);
-    });
-    cancelModalBtn.addEventListener('click', () => {
-        edit_log.close();
-    });
-
-    saveModalBtn.addEventListener('click', async () => {
-        const time = logTimeInput.value;
-        const content = logContentInput.value;
-
-        if (!time || !content.trim()) {
-            alert('请填写时间和内容');
-            return;
+        // ========= 3) 输入时自动保存草稿（防止跳转/刷新丢失）=========
+        let draftTimer = null;
+        function scheduleDraftSave() {
+            clearTimeout(draftTimer);
+            draftTimer = setTimeout(() => {
+                saveDraft().catch(() => {});
+            }, 350);
         }
-        addNewLog(time, content);
-        logTimeInput.value = "";
-        logContentInput.value = "";
-        await clearDraftOnServer();
-        edit_log.close();
-    });
+        logTimeInput.addEventListener('input', scheduleDraftSave);
+        logContentInput.addEventListener('input', scheduleDraftSave);
 
-    renderCurrentLog();
+        // ========= 4) 点击任何站内跳转链接前：强制保存一次草稿 =========
+        // 你页面里是 <a href="test1.jsp">...</a>，另一个页面也可能有 <a href="test2.jsp">...</a>
+        // 这里统一拦截同域的 <a> 点击：先保存再跳
+        document.addEventListener('click', async (e) => {
+            const a = e.target.closest && e.target.closest('a');
+            if (!a) return;
+
+            const href = a.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
+            // 只拦截同域跳转（相对路径、或同域绝对路径）
+            let url;
+            try { url = new URL(href, location.href); } catch (_) { return; }
+            if (url.origin !== location.origin) return;
+
+            // 如果当前编辑弹窗没开，也可以不保存；你想“只要跳转就保存”就不加这个判断
+            // if (!edit_log.open) return;
+
+            e.preventDefault();
+            try { await saveDraft(); } catch (_) {}
+            location.href = url.href;
+        }, true);
+
+        // ========= 5) 兜底：刷新/关闭页面前，用 sendBeacon 尽量保存一次 =========
+        window.addEventListener('beforeunload', () => {
+            if (!DRAFT_API) return;
+            try {
+                const payload = JSON.stringify({
+                    time: logTimeInput.value || null,
+                    content: logContentInput.value || ""
+                });
+                const blob = new Blob([payload], { type: 'application/json;charset=UTF-8' });
+                navigator.sendBeacon(DRAFT_API, blob);
+            } catch (_) {}
+        });
+    })();   // IIFE 结束
 </script>
 </body>
 </html>

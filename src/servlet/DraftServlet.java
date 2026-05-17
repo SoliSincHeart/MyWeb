@@ -1,7 +1,9 @@
 package servlet;
 
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.*;
+
 
 public class DraftServlet extends HttpServlet {
     private static final String KEY_TIME = "draft_time";
