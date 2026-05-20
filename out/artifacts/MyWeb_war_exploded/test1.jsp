@@ -249,7 +249,6 @@
             </div>
         </div>
         <div class="log_actions">
-            <!-- 为按钮添加 type="button" -->
             <button type="button" id="add_log" class="action_btn">添加日志</button>
             <button type="button" id="closeFirstDialog" class="action_btn secondary">关闭本弹窗</button>
         </div>
@@ -402,9 +401,7 @@
         // 初始渲染
         renderCurrentLog();
 
-        // ========= 1) DraftServlet 地址：你只需要在这里改成你 web.xml/@WebServlet 的 url-pattern =========
-        // 例如 web.xml: <url-pattern>/draft</url-pattern>  =>  '/draft'
-        // 或 @WebServlet("/draft") => '/draft'
+        // DraftServlet 地址
         const DRAFT_API_CANDIDATES = [
             (location.pathname.replace(/\/[^\/]*$/, '')) + '/draft',
             (location.pathname.replace(/\/[^\/]*$/, '')) + '/DraftServlet'
@@ -417,7 +414,6 @@
                     if (r.ok) return url;
                 } catch (_) {}
             }
-            // 实在探测不到就用第一个（你随后把 candidates 改准即可）
             return DRAFT_API_CANDIDATES[0];
         }
 
@@ -450,15 +446,13 @@
             if (data && data.content != null) logContentInput.value = data.content;
         }
 
-        // ========= 2) 打开“添加日志”弹窗时：自动把草稿恢复到输入框 =========
-        // 你原来的 add_log 点击事件是：edit_log.showModal();
-        // 这里不改样式，只在 showModal() 前插入恢复逻辑
+        //打开“添加日志”弹窗时：自动把草稿恢复到输入框
         add_log.addEventListener('click', async () => {
             await loadDraftToInputs();
             edit_log.showModal();
         });
 
-        // ========= 3) 输入时自动保存草稿（防止跳转/刷新丢失）=========
+        //输入时自动保存草稿（防止跳转/刷新丢失）
         let draftTimer = null;
         function scheduleDraftSave() {
             clearTimeout(draftTimer);
@@ -469,9 +463,8 @@
         logTimeInput.addEventListener('input', scheduleDraftSave);
         logContentInput.addEventListener('input', scheduleDraftSave);
 
-        // ========= 4) 点击任何站内跳转链接前：强制保存一次草稿 =========
-        // 你页面里是 <a href="test1.jsp">...</a>，另一个页面也可能有 <a href="test2.jsp">...</a>
-        // 这里统一拦截同域的 <a> 点击：先保存再跳
+        // 点击任何站内跳转链接前：强制保存一次草稿
+        // 统一拦截同域的 <a> 点击：先保存再跳
         document.addEventListener('click', async (e) => {
             const a = e.target.closest && e.target.closest('a');
             if (!a) return;
@@ -484,15 +477,13 @@
             try { url = new URL(href, location.href); } catch (_) { return; }
             if (url.origin !== location.origin) return;
 
-            // 如果当前编辑弹窗没开，也可以不保存；你想“只要跳转就保存”就不加这个判断
-            // if (!edit_log.open) return;
 
             e.preventDefault();
             try { await saveDraft(); } catch (_) {}
             location.href = url.href;
         }, true);
 
-        // ========= 5) 兜底：刷新/关闭页面前，用 sendBeacon 尽量保存一次 =========
+        //兜底：刷新/关闭页面前，用 sendBeacon 尽量保存一次
         window.addEventListener('beforeunload', () => {
             if (!DRAFT_API) return;
             try {

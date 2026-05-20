@@ -249,7 +249,6 @@
             </div>
         </div>
         <div class="log_actions">
-            <!-- 为按钮添加 type="button" -->
             <button type="button" id="add_log" class="action_btn">添加日志</button>
             <button type="button" id="closeFirstDialog" class="action_btn secondary">关闭本弹窗</button>
         </div>

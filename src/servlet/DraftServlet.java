@@ -6,8 +6,8 @@ import java.io.*;
 
 
 public class DraftServlet extends HttpServlet {
-    private static final String KEY_TIME = "draft_time";
-    private static final String KEY_CONTENT = "draft_content";
+    private static final String KEY_TIME = "draft_time";//≤›∏Â ±º‰
+    private static final String KEY_CONTENT = "draft_content";//≤›∏Âƒ⁄»›
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
