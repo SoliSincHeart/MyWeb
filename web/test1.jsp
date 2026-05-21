@@ -326,7 +326,6 @@
             const formattedTime = log.time.replace('T', ' ');
             logTimeDisplay.textContent = formattedTime;
             logContentPreview.textContent = log.content;
-            // 关键修复：确保分母显示正确（logsData.length 一定存在）
             logCounter.textContent = (currentLogIndex + 1) + " / " + logsData.length;
         }
 
