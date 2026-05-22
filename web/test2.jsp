@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="css/log.css">
   <style>
 
-    button, .arrow_btn, .action_btn, .modal_buttons button {
+    button, .arrow_btn, .add_btn, .modal_buttons button {
       user-select: none;
       -webkit-user-select: none;  /* Safari 兼容 */
       cursor: pointer;            /* 保持点击手感 */
@@ -102,7 +102,7 @@
       border-top: 1px solid #e2e8f0;
       padding-top: 16px;
     }
-    .action_btn {
+    .add_btn {
       padding: 6px 16px;
       border-radius: 40px;
       border: none;
@@ -110,7 +110,7 @@
       color: white;
       cursor: pointer;
     }
-    .action_btn.secondary {
+    .add_btn.secondary {
       background-color: #e2e8f0;
       color: #1e293b;
     }

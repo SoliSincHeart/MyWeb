@@ -80,7 +80,7 @@ dialog {
     border-top: 1px solid #e2e8f0;
     padding-top: 16px;
 }
-.action_btn {
+.add_btn {
     padding: 6px 16px;
     border-radius: 40px;
     border: none;
@@ -88,7 +88,7 @@ dialog {
     color: white;
     cursor: pointer;
 }
-.action_btn.secondary {
+.add_btn.secondary {
     background-color: #e2e8f0;
     color: #1e293b;
 }

@@ -13,7 +13,7 @@
     <title>原生dialog上下错开</title>
     <style>
         /* ========== 原有 CSS 完全保留，未作任何修改 ========== */
-        button, .arrow_btn, .action_btn, .modal_buttons button {
+        button, .arrow_btn, .add_btn, .modal_buttons button {
             user-select: none;
             -webkit-user-select: none;  /* Safari 兼容 */
             cursor: pointer;            /* 保持点击手感 */
@@ -101,7 +101,7 @@
             border-top: 1px solid #e2e8f0;
             padding-top: 16px;
         }
-        .action_btn {
+        .add_btn {
             padding: 6px 16px;
             border-radius: 40px;
             border: none;
@@ -109,7 +109,7 @@
             color: white;
             cursor: pointer;
         }
-        .action_btn.secondary {
+        .add_btn.secondary {
             background-color: #e2e8f0;
             color: #1e293b;
         }
@@ -232,7 +232,7 @@
 <body>
 <a href="test2.jsp">这里是第一个网站</a>
 <!-- 关键修复：为按钮添加 type="button" 避免表单提交或焦点移动 -->
-<button type="button" id="mg_log">随身日志</button>
+<button type="button" id="mg_log">展示日志</button>
 
 <dialog id="show_log">
     <div class="log_viewer">
@@ -249,8 +249,10 @@
             </div>
         </div>
         <div class="log_actions">
-            <button type="button" id="add_log" class="action_btn">添加日志</button>
-            <button type="button" id="closeFirstDialog" class="action_btn secondary">关闭本弹窗</button>
+            <button type="button" id="add_log" class="add_btn">添加日志</button>
+            <button type="button" id="closeshowlog" class="add_btn secondary">关闭本弹窗</button>
+            <!-- ========== 新增：删除当前日志按钮（按钮已存在，仅确保功能完整） ========== -->
+            <button type="button" id="delete_current_log" class="add_btn secondary">删除当前日志</button>
         </div>
     </div>
 </dialog>
@@ -280,7 +282,7 @@
         const edit_log = document.getElementById('edit_log');
         const mg_log = document.getElementById('mg_log');
         const add_log = document.getElementById('add_log');
-        const closeFirstBtn = document.getElementById('closeFirstDialog');
+        const closeshowlog = document.getElementById('closeshowlog');
         const cancelModalBtn = document.getElementById('cancelModalBtn');
         const saveModalBtn = document.getElementById('saveModalBtn');
 
@@ -326,7 +328,6 @@
             const formattedTime = log.time.replace('T', ' ');
             logTimeDisplay.textContent = formattedTime;
             logContentPreview.textContent = log.content;
-            // 关键修复：确保分母显示正确（logsData.length 一定存在）
             logCounter.textContent = (currentLogIndex + 1) + " / " + logsData.length;
         }
 
@@ -358,15 +359,51 @@
             return true;
         }
 
+        // ====== 新增：删除当前显示的日志（已修复 JSP EL 冲突，使用字符串拼接） ======
+        function deleteCurrentLog() {
+            // 无日志时不做任何操作
+            if (!logsData.length) {
+                return;
+            }
+            // 构建确认信息（避免使用模板字符串中的  以免被 JSP 解析）
+            var currentLog = logsData[currentLogIndex];
+            var timeStr = currentLog ? (currentLog.time ? currentLog.time.replace('T', ' ') : '未知') : '未知';
+            var contentPreview = currentLog ? (currentLog.content ? currentLog.content.substring(0, 50) : '') : '';
+            var previewSuffix = (currentLog && currentLog.content && currentLog.content.length > 50) ? '…' : '';
+            var confirmMsg = "确定要删除这条日志吗？\n时间：" + timeStr + "\n正文预览：" + contentPreview + previewSuffix;
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+            // 执行删除
+            logsData.splice(currentLogIndex, 1);
+            // 调整索引
+            if (logsData.length === 0) {
+                currentLogIndex = 0;
+                renderCurrentLog();
+                return;
+            }
+            if (currentLogIndex >= logsData.length) {
+                currentLogIndex = logsData.length - 1;
+            }
+            renderCurrentLog();
+        }
+
         // ====== 事件绑定（所有按钮均已添加 type="button"） ======
         if (leftArrow) leftArrow.addEventListener('click', prevLog);
         if (rightArrow) rightArrow.addEventListener('click', nextLog);
 
         if (saveModalBtn) {
-            saveModalBtn.addEventListener('click', () => {
+            saveModalBtn.addEventListener('click', async () => {  // 改为 async
                 const newTime = logTimeInput.value;
                 const newContent = logContentInput.value;
                 if (addNewLog(newTime, newContent)) {
+                    // 保存成功后，清空服务器端的草稿
+                    await deleteDraft();  // 调用 DELETE
+
+                    // 同时清空输入框
+                    logTimeInput.value = '';
+                    logContentInput.value = '';
+
                     edit_log.close();
                     if (show_log.open) renderCurrentLog();
                 }
@@ -386,8 +423,8 @@
             });
         }
 
-        if (closeFirstBtn) {
-            closeFirstBtn.addEventListener('click', () => {
+        if (closeshowlog) {
+            closeshowlog.addEventListener('click', () => {
                 show_log.close();
             });
         }
@@ -395,6 +432,15 @@
         if (cancelModalBtn) {
             cancelModalBtn.addEventListener('click', () => {
                 edit_log.close();
+            });
+        }
+
+        // ====== 新增：为删除按钮绑定事件 ======
+        const deleteLogBtn = document.getElementById('delete_current_log');
+        if (deleteLogBtn) {
+            deleteLogBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // 避免冒泡
+                deleteCurrentLog();
             });
         }
 
@@ -451,6 +497,27 @@
             await loadDraftToInputs();
             edit_log.showModal();
         });
+
+        // 定义删除草稿的函数
+        async function deleteDraft() {
+            if (!DRAFT_API) DRAFT_API = await detectDraftApi();
+
+            try {
+                const response = await fetch(DRAFT_API, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+                    credentials: 'same-origin'  // 关键：带上 JSESSIONID
+                });
+
+                if (response.ok) {
+                    console.log('草稿已清除');
+                    return true;
+                }
+            } catch (error) {
+                console.error('删除草稿失败:', error);
+                return false;
+            }
+        }
 
         //输入时自动保存草稿（防止跳转/刷新丢失）
         let draftTimer = null;
