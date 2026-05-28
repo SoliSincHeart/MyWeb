@@ -114,7 +114,6 @@
             color: #1e293b;
         }
 
-
         #edit_log {
             top: 30%;
             height:50%;
@@ -136,17 +135,6 @@
             max-width: 90%;
             padding: 24px;
         }
-        /* 动画未实现 */
-        /* 		@keyframes fadeInUp {
-                    from {
-                        opacity: 0;
-                        transform: translateY(12px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                } */
 
         .edit_modal h3 {
             margin-top: 0;
@@ -161,7 +149,6 @@
             margin: 12px 0 6px;
             color: #0f172a;
         }
-        /*	标题和正文 */
         .edit_modal input, .edit_modal textarea {
             width: 90%;
             padding: 10px 14px;
@@ -215,13 +202,11 @@
             background-color: #cbd5e1;
         }
 
-        /* 鼠标点击也会触发 focus：这里不显示任何焦点效果 */
         dialog .arrow_btn:focus {
             outline: none !important;
             box-shadow: none !important;
         }
 
-        /* 键盘 Tab 导航时才显示正常的焦点环 */
         dialog .arrow_btn:focus-visible {
             outline: 2px solid #3b82f6 !important;
             outline-offset: 2px !important;
@@ -231,14 +216,12 @@
 </head>
 <body>
 <a href="test2.jsp">这里是第一个网站</a>
-<!-- 关键修复：为按钮添加 type="button" 避免表单提交或焦点移动 -->
 <button type="button" id="mg_log">展示日志</button>
 
 <dialog id="show_log">
     <div class="log_viewer">
         <div class="log_header">
             <span class="log_time_display">暂无日志</span>
-            <!-- 为左右箭头添加 type="button" -->
             <button type="button" class="arrow_btn left_arrow">◀</button>
             <span class="log_counter">0 / 0</span>
             <button type="button" class="arrow_btn right_arrow">▶</button>
@@ -251,7 +234,6 @@
         <div class="log_actions">
             <button type="button" id="add_log" class="add_btn">添加日志</button>
             <button type="button" id="closeshowlog" class="add_btn secondary">关闭本弹窗</button>
-            <!-- ========== 新增：删除当前日志按钮（按钮已存在，仅确保功能完整） ========== -->
             <button type="button" id="delete_current_log" class="add_btn secondary">删除当前日志</button>
         </div>
     </div>
@@ -266,7 +248,6 @@
             <label>正文</label>
             <textarea id="logContentInput" placeholder="写点什么..."></textarea>
             <div class="modal_buttons">
-                <!-- 为模态框按钮添加 type="button" -->
                 <button type="button" class="cancel_btn" id="cancelModalBtn">取消</button>
                 <button type="button" class="save_btn" id="saveModalBtn">保存</button>
             </div>
@@ -275,9 +256,8 @@
 </dialog>
 
 <script>
-    // ========== 修复：使用 IIFE 隔离作用域，防止 JSP 环境全局污染 ==========
     (function() {
-        // DOM 元素
+        // DOM
         const show_log = document.getElementById('show_log');
         const edit_log = document.getElementById('edit_log');
         const mg_log = document.getElementById('mg_log');
@@ -295,22 +275,24 @@
         const logTimeInput = document.getElementById('logTimeInput');
         const logContentInput = document.getElementById('logContentInput');
 
-        // 数据（内存存储）- 确保是数组且不被外部覆盖
-        let logsData = [
-            {
-                time: "2026-05-09T14:30:00",
-                content: "今天初次实现了原生dialog上下错开，样式用下划线命名统一。"
-            },
-            {
-                time: "2026-05-08T09:15:00",
-                content: "解决弹窗联动中的数据同步问题，使用数据驱动视图。"
-            }
-        ];
+        // 数据来自数据库：每条 { id, time, content }
+        // time: "yyyy-MM-dd HH:mm:ss.SSS"（来自后端 DTO）
+        let logsData = [];
         let currentLogIndex = 0;
 
-        // ====== 渲染函数（增强防御，修复计数显示异常） ======
+        // ========== API 地址（同目录拼接，适配 contextPath）==========
+        const BASE = (location.pathname.replace(/\/[^\/]*$/, ''));
+        const LOGS_API = BASE + '/logs';
+
+        // 草稿接口候选（保持原逻辑）
+        const DRAFT_API_CANDIDATES = [
+            BASE + '/draft',
+            BASE + '/DraftServlet'
+        ];
+        let DRAFT_API = null;
+
+        // ========== 渲染 ==========
         function renderCurrentLog() {
-            // 防御：确保 logsData 是数组且长度有效
             if (!Array.isArray(logsData) || logsData.length === 0) {
                 if (logTimeDisplay) logTimeDisplay.textContent = '暂无日志';
                 if (logContentPreview) logContentPreview.textContent = '没有日志，请点击"添加日志"添加';
@@ -318,20 +300,19 @@
                 return;
             }
 
-            // 边界保护
             if (currentLogIndex >= logsData.length) currentLogIndex = logsData.length - 1;
             if (currentLogIndex < 0) currentLogIndex = 0;
 
             const log = logsData[currentLogIndex];
             if (!log) return;
 
-            const formattedTime = log.time.replace('T', ' ');
-            logTimeDisplay.textContent = formattedTime;
-            logContentPreview.textContent = log.content;
+            // 统一展示到秒：yyyy-MM-dd HH:mm:ss
+            const timeShow = (log.time ? String(log.time).substring(0, 19) : "未知时间");
+            logTimeDisplay.textContent = timeShow;
+            logContentPreview.textContent = log.content || "";
             logCounter.textContent = (currentLogIndex + 1) + " / " + logsData.length;
         }
 
-        // ====== 切换 ======
         function prevLog() {
             if (!logsData.length) return;
             currentLogIndex = (currentLogIndex - 1 + logsData.length) % logsData.length;
@@ -344,115 +325,74 @@
             renderCurrentLog();
         }
 
-        // ====== 添加新日志 ======
-        function addNewLog(timeValue, contentValue) {
-            if (!timeValue || !contentValue.trim()) {
-                alert("请填写完整的时间和正文内容");
-                return false;
-            }
-            logsData.unshift({
-                time: timeValue,
-                content: contentValue.trim()
-            });
-            currentLogIndex = 0;
-            if (show_log.open) renderCurrentLog();
-            return true;
-        }
+        // ========== /logs 数据库接口 ==========
+        async function loadLogsFromDb() {
+            const r = await fetch(LOGS_API + "?limit=200&offset=0", { credentials: 'same-origin' });
+            if (!r.ok) throw new Error("读取日志失败");
 
-        // ====== 新增：删除当前显示的日志（已修复 JSP EL 冲突，使用字符串拼接） ======
-        function deleteCurrentLog() {
-            // 无日志时不做任何操作
-            if (!logsData.length) {
-                return;
-            }
-            // 构建确认信息（避免使用模板字符串中的  以免被 JSP 解析）
-            var currentLog = logsData[currentLogIndex];
-            var timeStr = currentLog ? (currentLog.time ? currentLog.time.replace('T', ' ') : '未知') : '未知';
-            var contentPreview = currentLog ? (currentLog.content ? currentLog.content.substring(0, 50) : '') : '';
-            var previewSuffix = (currentLog && currentLog.content && currentLog.content.length > 50) ? '…' : '';
-            var confirmMsg = "确定要删除这条日志吗？\n时间：" + timeStr + "\n正文预览：" + contentPreview + previewSuffix;
-            if (!confirm(confirmMsg)) {
-                return;
-            }
-            // 执行删除
-            logsData.splice(currentLogIndex, 1);
-            // 调整索引
-            if (logsData.length === 0) {
-                currentLogIndex = 0;
-                renderCurrentLog();
-                return;
-            }
-            if (currentLogIndex >= logsData.length) {
-                currentLogIndex = logsData.length - 1;
-            }
+            const arr = await r.json();
+            logsData = (Array.isArray(arr) ? arr : []).map(item => ({
+                id: item && item.id != null ? item.id : null,
+                time: item && item.time != null ? String(item.time) : null,       // "yyyy-MM-dd HH:mm:ss.SSS"
+                content: item && item.content != null ? String(item.content) : ""
+            }));
+
+            currentLogIndex = 0;
             renderCurrentLog();
         }
 
-        // ====== 事件绑定（所有按钮均已添加 type="button"） ======
-        if (leftArrow) leftArrow.addEventListener('click', prevLog);
-        if (rightArrow) rightArrow.addEventListener('click', nextLog);
+        async function saveLogToDb(timeValue, contentValue) {
+            const payload = {
+                time: timeValue || null,      // datetime-local: "yyyy-MM-ddTHH:mm:ss"
+                content: contentValue || ""
+            };
 
-        if (saveModalBtn) {
-            saveModalBtn.addEventListener('click', async () => {  // 改为 async
-                const newTime = logTimeInput.value;
-                const newContent = logContentInput.value;
-                if (addNewLog(newTime, newContent)) {
-                    // 保存成功后，清空服务器端的草稿
-                    await deleteDraft();  // 调用 DELETE
-
-                    // 同时清空输入框
-                    logTimeInput.value = '';
-                    logContentInput.value = '';
-
-                    edit_log.close();
-                    if (show_log.open) renderCurrentLog();
-                }
+            const r = await fetch(LOGS_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+                body: JSON.stringify(payload),
+                credentials: 'same-origin'
             });
+
+            if (!r.ok) {
+                let msg = "保存失败";
+                try {
+                    const data = await r.json();
+                    if (data && data.error) msg = msg + ": " + data.error;
+                } catch (_) {}
+                throw new Error(msg);
+            }
+            return await r.json(); // {ok:true,id:...}
         }
 
-        if (mg_log) {
-            mg_log.addEventListener('click', () => {
-                show_log.showModal();
-                renderCurrentLog();
-            });
+        async function deleteLogFromDb(id) {
+            if (!id) throw new Error("无法删除：缺少 id");
+
+            const url = LOGS_API + "?id=" + encodeURIComponent(id);
+            const r = await fetch(url, { method: 'DELETE', credentials: 'same-origin' });
+            if (!r.ok) throw new Error("删除失败");
+            return await r.json(); // {ok:true/false}
         }
 
-        if (add_log) {
-            add_log.addEventListener('click', () => {
-                edit_log.showModal();
-            });
+        async function deleteCurrentLog() {
+            if (!logsData.length) return;
+
+            const currentLog = logsData[currentLogIndex];
+            const timeShow = currentLog && currentLog.time ? String(currentLog.time).substring(0, 19) : "未知时间";
+            const contentPreview = currentLog && currentLog.content ? currentLog.content.substring(0, 50) : "";
+            const previewSuffix = (currentLog && currentLog.content && currentLog.content.length > 50) ? "…" : "";
+            const confirmMsg = "确定要删除这条日志吗？\n时间：" + timeShow + "\n正文预览：" + contentPreview + previewSuffix;
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                await deleteLogFromDb(currentLog.id);
+                await loadLogsFromDb();
+            } catch (e) {
+                alert(e && e.message ? e.message : "删除失败");
+            }
         }
 
-        if (closeshowlog) {
-            closeshowlog.addEventListener('click', () => {
-                show_log.close();
-            });
-        }
-
-        if (cancelModalBtn) {
-            cancelModalBtn.addEventListener('click', () => {
-                edit_log.close();
-            });
-        }
-
-        // ====== 新增：为删除按钮绑定事件 ======
-        const deleteLogBtn = document.getElementById('delete_current_log');
-        if (deleteLogBtn) {
-            deleteLogBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // 避免冒泡
-                deleteCurrentLog();
-            });
-        }
-
-        // 初始渲染
-        renderCurrentLog();
-
-        // DraftServlet 地址
-        const DRAFT_API_CANDIDATES = [
-            (location.pathname.replace(/\/[^\/]*$/, '')) + '/draft',
-            (location.pathname.replace(/\/[^\/]*$/, '')) + '/DraftServlet'
-        ];
-
+        // ========== 草稿接口（/draft） ==========
         async function detectDraftApi() {
             for (const url of DRAFT_API_CANDIDATES) {
                 try {
@@ -462,8 +402,6 @@
             }
             return DRAFT_API_CANDIDATES[0];
         }
-
-        let DRAFT_API = null;
 
         async function saveDraft() {
             if (!DRAFT_API) DRAFT_API = await detectDraftApi();
@@ -477,7 +415,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json;charset=UTF-8' },
                 body: JSON.stringify(payload),
-                credentials: 'same-origin' // 关键：带上 JSESSIONID，让 servlet 用同一个 session
+                credentials: 'same-origin'
             });
         }
 
@@ -492,34 +430,89 @@
             if (data && data.content != null) logContentInput.value = data.content;
         }
 
-        //打开“添加日志”弹窗时：自动把草稿恢复到输入框
-        add_log.addEventListener('click', async () => {
-            await loadDraftToInputs();
-            edit_log.showModal();
-        });
-
-        // 定义删除草稿的函数
         async function deleteDraft() {
             if (!DRAFT_API) DRAFT_API = await detectDraftApi();
-
             try {
                 const response = await fetch(DRAFT_API, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-                    credentials: 'same-origin'  // 关键：带上 JSESSIONID
+                    credentials: 'same-origin'
                 });
-
-                if (response.ok) {
-                    console.log('草稿已清除');
-                    return true;
-                }
-            } catch (error) {
-                console.error('删除草稿失败:', error);
+                return response.ok;
+            } catch (_) {
                 return false;
             }
         }
 
-        //输入时自动保存草稿（防止跳转/刷新丢失）
+        // ========== 事件绑定 ==========
+        if (leftArrow) leftArrow.addEventListener('click', prevLog);
+        if (rightArrow) rightArrow.addEventListener('click', nextLog);
+
+        if (mg_log) {
+            mg_log.addEventListener('click', async () => {
+                show_log.showModal();
+                try {
+                    await loadLogsFromDb(); // 每次打开都刷新
+                } catch (_) {
+                    renderCurrentLog();
+                    alert("读取日志失败（请检查 /logs 接口或数据库连接）");
+                }
+            });
+        }
+
+        if (add_log) {
+            add_log.addEventListener('click', async () => {
+                await loadDraftToInputs();
+                edit_log.showModal();
+            });
+        }
+
+        if (closeshowlog) {
+            closeshowlog.addEventListener('click', () => show_log.close());
+        }
+
+        if (cancelModalBtn) {
+            cancelModalBtn.addEventListener('click', () => edit_log.close());
+        }
+
+        // 保存：写库 -> 清草稿 -> 清输入 -> 关闭 -> 刷新列表
+        if (saveModalBtn) {
+            saveModalBtn.addEventListener('click', async () => {
+                const newTime = logTimeInput.value;
+                const newContent = logContentInput.value;
+
+                if (!newTime || !newContent.trim()) {
+                    alert("请填写完整的时间和正文内容");
+                    return;
+                }
+
+                try {
+                    await saveLogToDb(newTime, newContent.trim());
+                    await deleteDraft();
+
+                    logTimeInput.value = '';
+                    logContentInput.value = '';
+
+                    edit_log.close();
+
+                    if (show_log.open) {
+                        await loadLogsFromDb();
+                    }
+                } catch (e) {
+                    alert(e && e.message ? e.message : "保存失败");
+                }
+            });
+        }
+
+        const deleteLogBtn = document.getElementById('delete_current_log');
+        if (deleteLogBtn) {
+            deleteLogBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteCurrentLog();
+            });
+        }
+
+        // 输入时自动保存草稿（防止跳转/刷新丢失）
         let draftTimer = null;
         function scheduleDraftSave() {
             clearTimeout(draftTimer);
@@ -530,8 +523,7 @@
         logTimeInput.addEventListener('input', scheduleDraftSave);
         logContentInput.addEventListener('input', scheduleDraftSave);
 
-        // 点击任何站内跳转链接前：强制保存一次草稿
-        // 统一拦截同域的 <a> 点击：先保存再跳
+        // 点击同域链接前：强制保存一次草稿
         document.addEventListener('click', async (e) => {
             const a = e.target.closest && e.target.closest('a');
             if (!a) return;
@@ -539,18 +531,16 @@
             const href = a.getAttribute('href');
             if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
 
-            // 只拦截同域跳转（相对路径、或同域绝对路径）
             let url;
             try { url = new URL(href, location.href); } catch (_) { return; }
             if (url.origin !== location.origin) return;
-
 
             e.preventDefault();
             try { await saveDraft(); } catch (_) {}
             location.href = url.href;
         }, true);
 
-        //兜底：刷新/关闭页面前，用 sendBeacon 尽量保存一次
+        // 兜底：刷新/关闭页面前，用 sendBeacon 尽量保存一次草稿
         window.addEventListener('beforeunload', () => {
             if (!DRAFT_API) return;
             try {
@@ -562,7 +552,10 @@
                 navigator.sendBeacon(DRAFT_API, blob);
             } catch (_) {}
         });
-    })();   // IIFE 结束
+
+        // 初始渲染
+        renderCurrentLog();
+    })();
 </script>
 </body>
 </html>

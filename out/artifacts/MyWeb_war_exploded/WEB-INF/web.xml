@@ -5,12 +5,12 @@
          http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
-    <servlet>
-        <servlet-name>DraftServlet</servlet-name>
-        <servlet-class>servlet.DraftServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DraftServlet</servlet-name>
-        <url-pattern>/draft</url-pattern>
-    </servlet-mapping>
+<!--    <servlet>-->
+<!--        <servlet-name>DraftServlet</servlet-name>-->
+<!--        <servlet-class>servlet.DraftServlet</servlet-class>-->
+<!--    </servlet>-->
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>DraftServlet</servlet-name>-->
+<!--        <url-pattern>/draft</url-pattern>-->
+<!--    </servlet-mapping>-->
 </web-app>
