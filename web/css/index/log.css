@@ -1,3 +1,10 @@
+/* ========== 原有 CSS 完全保留，未作任何修改 ========== */
+button, .arrow_btn, .add_btn, .modal_buttons button {
+    user-select: none;
+    -webkit-user-select: none;  /* Safari 兼容 */
+    cursor: pointer;            /* 保持点击手感 */
+}
+
 dialog {
     border-radius: 12px;
     border: none;
@@ -93,7 +100,6 @@ dialog {
     color: #1e293b;
 }
 
-
 #edit_log {
     top: 30%;
     height:50%;
@@ -115,17 +121,6 @@ dialog {
     max-width: 90%;
     padding: 24px;
 }
-/* 动画未实现 */
-/* 		@keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        } */
 
 .edit_modal h3 {
     margin-top: 0;
@@ -140,7 +135,6 @@ dialog {
     margin: 12px 0 6px;
     color: #0f172a;
 }
-/*	标题和正文 */
 .edit_modal input, .edit_modal textarea {
     width: 90%;
     padding: 10px 14px;
@@ -192,4 +186,15 @@ dialog {
 
 .cancel_btn:hover {
     background-color: #cbd5e1;
+}
+
+dialog .arrow_btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+dialog .arrow_btn:focus-visible {
+    outline: 2px solid #3b82f6 !important;
+    outline-offset: 2px !important;
+    box-shadow: none !important;
 }

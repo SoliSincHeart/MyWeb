@@ -1,8 +1,8 @@
 package bean;
 
 public class LogDraft {
-    private String time;     // "2026-05-28T12:00:00"（来自 datetime-local）或 null
-    private String content;  // 内容（允许空串）
+    private String time;
+    private String content;
 
     public LogDraft() {}
 

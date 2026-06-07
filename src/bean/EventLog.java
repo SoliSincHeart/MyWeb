@@ -2,11 +2,10 @@ package bean;
 
 import java.sql.Timestamp;
 
-// 数据库实体（DAO 层用）
 public class EventLog {
-    private long id;
-    private String content;
-    private Timestamp eventTime;
+    private long id;// 数据表id
+    private String content;// 日志内容
+    private Timestamp eventTime;// 日志时间
 
     public EventLog() {}
 

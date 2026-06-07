@@ -1,9 +1,8 @@
 package bean;
 
-// 对前端输出用（Servlet GET /logs 返回这个，避免 Timestamp 被 Gson 序列化成 Jun 15...）
 public class EventLogDto {
     private long id;
-    private String time;    // "yyyy-MM-dd HH:mm:ss.SSS"
+    private String time;// 输出时间
     private String content;
 
     public EventLogDto() {}

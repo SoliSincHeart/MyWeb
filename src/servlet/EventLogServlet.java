@@ -29,7 +29,6 @@ public class EventLogServlet extends HttpServlet {
         resp.setContentType("application/json; charset=UTF-8");
 
         try {
-            // 关键：返回 DTO（time 字符串），不直接返回 Timestamp
             List<?> list = service.listDescDto(limit, offset);
             resp.getWriter().write(GSON.toJson(list));
         } catch (SQLException e) {

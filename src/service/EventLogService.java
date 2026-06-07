@@ -3,7 +3,9 @@ package service;
 import bean.EventLog;
 import bean.EventLogDto;
 import dao.EventLogDao;
+import util.JdbcUtil;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -13,23 +15,26 @@ import java.util.List;
 public class EventLogService {
     private final EventLogDao dao = new EventLogDao();
 
-    // 对外：返回 DTO（字符串时间，稳定）
     public List<EventLogDto> listDescDto(int limit, int offset) throws SQLException {
         if (limit <= 0) limit = 50;
         if (limit > 200) limit = 200;
         if (offset < 0) offset = 0;
 
-        List<EventLog> list = dao.listDesc(limit, offset);
+        Connection conn = null;
+        try {
+            conn = JdbcUtil.getConnection();
+            List<EventLog> list = dao.listDesc(conn, limit, offset);
 
-        // 固定格式，避免 Gson 把 Timestamp 序列化成本地化字符串
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-
-        List<EventLogDto> out = new ArrayList<>();
-        for (EventLog e : list) {
-            String time = (e.getEventTime() == null) ? null : fmt.format(e.getEventTime());
-            out.add(new EventLogDto(e.getId(), time, e.getContent()));
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            List<EventLogDto> out = new ArrayList<>();
+            for (EventLog e : list) {
+                String time = (e.getEventTime() == null) ? null : fmt.format(e.getEventTime());
+                out.add(new EventLogDto(e.getId(), time, e.getContent()));
+            }
+            return out;
+        } finally {
+            JdbcUtil.close(conn);
         }
-        return out;
     }
 
     public long addLog(String timeStr, String content) throws SQLException {
@@ -37,18 +42,43 @@ public class EventLogService {
         if (content == null || content.isBlank()) throw new IllegalArgumentException("content required");
 
         Timestamp ts = toTimestamp(timeStr);
-        return dao.insert(content, ts);
+
+        Connection conn = null;
+        try {
+            conn = JdbcUtil.getConnection();
+
+            // 如果你未来要多表操作，再打开事务：
+            // conn.setAutoCommit(false);
+
+            long id = dao.insert(conn, content, ts);
+
+            // if (!conn.getAutoCommit()) conn.commit();
+
+            return id;
+        } catch (SQLException e) {
+            // 如果你打开了事务，这里回滚
+            // JdbcUtil.rollbackQuietly(conn);
+            throw e;
+        } finally {
+            JdbcUtil.close(conn);
+        }
     }
 
     public boolean deleteLog(long id) throws SQLException {
         if (id <= 0) throw new IllegalArgumentException("bad id");
-        return dao.deleteById(id);
+
+        Connection conn = null;
+        try {
+            conn = JdbcUtil.getConnection();
+            return dao.deleteById(conn, id);
+        } finally {
+            JdbcUtil.close(conn);
+        }
     }
 
-    // 接收 datetime-local: "2026-05-28T12:00:00" 或带毫秒
+    // "2026-05-28T12:00:00" 或 "2026-05-28T12:00:00.123" -> Timestamp
     public static Timestamp toTimestamp(String datetimeLocal) {
         String v = datetimeLocal.trim().replace('T', ' ');
-        // 保证至少到毫秒（3位），避免数据库 DATETIME(3) 精度不一致
         if (v.length() == 19) v = v + ".000";
         return Timestamp.valueOf(v);
     }
