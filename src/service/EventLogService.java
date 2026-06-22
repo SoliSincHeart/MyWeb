@@ -20,11 +20,8 @@ public class EventLogService {
         if (limit > 200) limit = 200;
         if (offset < 0) offset = 0;
 
-        Connection conn = null;
-        try {
-            conn = JdbcUtil.getConnection();
+        try (Connection conn = JdbcUtil.getConnection()) {
             List<EventLog> list = dao.listDesc(conn, limit, offset);
-
             SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             List<EventLogDto> out = new ArrayList<>();
             for (EventLog e : list) {
@@ -32,8 +29,6 @@ public class EventLogService {
                 out.add(new EventLogDto(e.getId(), time, e.getContent()));
             }
             return out;
-        } finally {
-            JdbcUtil.close(conn);
         }
     }
 
@@ -42,22 +37,16 @@ public class EventLogService {
         if (content == null || content.isBlank()) throw new IllegalArgumentException("content required");
 
         Timestamp ts = toTimestamp(timeStr);
-
         Connection conn = null;
         try {
             conn = JdbcUtil.getConnection();
-
-            // 如果你未来要多表操作，再打开事务：
-            // conn.setAutoCommit(false);
+            conn.setAutoCommit(false);   // 开启事务
 
             long id = dao.insert(conn, content, ts);
-
-            // if (!conn.getAutoCommit()) conn.commit();
-
+            conn.commit();
             return id;
         } catch (SQLException e) {
-            // 如果你打开了事务，这里回滚
-            // JdbcUtil.rollbackQuietly(conn);
+            JdbcUtil.rollbackQuietly(conn);
             throw e;
         } finally {
             JdbcUtil.close(conn);
@@ -66,20 +55,21 @@ public class EventLogService {
 
     public boolean deleteLog(long id) throws SQLException {
         if (id <= 0) throw new IllegalArgumentException("bad id");
-
-        Connection conn = null;
-        try {
-            conn = JdbcUtil.getConnection();
+        try (Connection conn = JdbcUtil.getConnection()) {
             return dao.deleteById(conn, id);
-        } finally {
-            JdbcUtil.close(conn);
         }
     }
 
-    // "2026-05-28T12:00:00" 或 "2026-05-28T12:00:00.123" -> Timestamp
+    // 增强的时间解析：支持 "yyyy-MM-ddTHH:mm"（无秒）和带毫秒
     public static Timestamp toTimestamp(String datetimeLocal) {
         String v = datetimeLocal.trim().replace('T', ' ');
-        if (v.length() == 19) v = v + ".000";
+        // 如果长度是16（yyyy-MM-dd HH:mm），补上 ":00.000"
+        if (v.length() == 16) {
+            v = v + ":00.000";
+        } else if (v.length() == 19) { // yyyy-MM-dd HH:mm:ss
+            v = v + ".000";
+        }
+        // 如果已经包含毫秒，直接解析
         return Timestamp.valueOf(v);
     }
 }

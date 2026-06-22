@@ -3,7 +3,6 @@ package util;
 import java.sql.*;
 
 public class JdbcUtil {
-    // 建议：与你本地一致，否则读写 Timestamp 可能偏移
     private static final String URL =
             "jdbc:mysql://localhost:3306/myblog?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai";
     private static final String USER = "root";
