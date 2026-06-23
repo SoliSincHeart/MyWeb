@@ -4,7 +4,7 @@ import java.sql.*;
 
 public class JdbcUtil {
     private static final String URL =
-            "jdbc:mysql://localhost:3306/myblog?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai";
+            "jdbc:mysql://localhost:3306/myblog?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true";
     private static final String USER = "root";
     private static final String PASSWORD = "123456";
 
