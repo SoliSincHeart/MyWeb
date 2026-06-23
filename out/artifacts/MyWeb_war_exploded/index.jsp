@@ -1,21 +1,14 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: hyb
-  Date: 2026/5/14
-  Time: 12:36
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>cover + login-card 同步缩放并锚定</title>
-  <!-- Font Awesome 6 (免费图标库) -->
+  <title>日志 + 登录</title>
+  <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-
   <style>
-    /* ===== 新增：防止非输入元素的文本选中和多余光标 ===== */
+    /* ===== 全局防选中 ===== */
     html, body, .stage, .login-card, .form-wrapper, .footer-note,
     button, .btn, .switch-text, .arrow_btn, .action_btn, #mg_log,
     .form-title, .log-preview-time, .log-preview-body, .log-count-badge,
@@ -26,32 +19,26 @@
       -ms-user-select: none;
       cursor: default;
     }
-
     input, textarea {
       user-select: text;
       -webkit-user-select: text;
       cursor: text;
     }
-
     button, .btn, .switch-text, .arrow_btn, .action_btn, #mg_log {
       cursor: pointer;
     }
-
     button:focus, .btn:focus, .switch-text:focus, .arrow_btn:focus, .action_btn:focus, #mg_log:focus {
       outline: none;
     }
 
-    /* ===== 全局重置 ===== */
-    html,
-    body {
+    /* ===== 重置 & 舞台 ===== */
+    html, body {
       margin: 0;
       padding: 0;
       width: 100vw;
       height: 100vh;
       overflow-x: auto;
     }
-
-    /* ===== 舞台：撑满视口，可滚动 ===== */
     .stage {
       position: relative;
       width: 100vw;
@@ -59,8 +46,6 @@
       min-height: 100vh;
       overflow: hidden;
     }
-
-    /* ===== 背景图：cover 居中顶对齐 ===== */
     .stage img {
       position: absolute;
       top: 0;
@@ -75,47 +60,45 @@
       -webkit-user-drag: none;
     }
 
-    /* ================================================================
-           ★ 日志预览框 — 与 login-card 完全一致的锚定方式 ★
-           ================================================================ */
-    #logPreviewBox {
+    /* ===== 日志预览框 ===== */
+    #logBox {
       position: absolute;
+      width: 434px;
+      height: 471px;
+      background-image: url("resources/img/log.png");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
       transform-origin: 0 0;
       will-change: transform, left, top;
-      z-index: 20;
+      border: solid 2px red; /* 调试用，可删除 */
+    }
+    .logPreviewBox {
+      position: relative;
+      top: 18%;
+      left: 22%;
       width: 280px;
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-      padding: 16px 18px 14px 18px;
-      pointer-events: auto;
-      color: #f0f3fa;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-      user-select: none;
+      height: 300px;
+      padding: 30px 25px 20px 25px;
+      transform: rotate(-5deg);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid red; /* 调试用 */
+      font-weight: 800;
     }
-
-    #logPreviewBox:hover {
-      background: rgba(255, 255, 255, 0.18);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-    }
-
     .log-preview-time {
       display: block;
       font-size: 12px;
-      font-weight: 500;
       opacity: 0.8;
       letter-spacing: 0.5px;
       margin-bottom: 4px;
       color: #eef2ff;
     }
-
     .log-preview-body {
-      font-size: 14px;
+      border: 1px solid red;
+      position: relative;
+      font-size: 16px;
       line-height: 1.5;
-      font-weight: 400;
       color: #ffffff;
       display: -webkit-box;
       -webkit-line-clamp: 3;
@@ -127,27 +110,23 @@
       word-break: break-word;
       margin-bottom: 10px;
     }
-
     .log-preview-footer {
       display: flex;
       justify-content: flex-end;
       align-items: center;
       gap: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      border-top: 1px solid rgba(255,255,255,0.15);
       padding-top: 10px;
     }
-
     .log-preview-footer .log-count-badge {
       font-size: 11px;
       opacity: 0.6;
       color: #eef2ff;
       font-weight: 400;
-      letter-spacing: 0.3px;
     }
-
     #mg_log {
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 40px;
       padding: 4px 14px;
       font-size: 13px;
@@ -155,49 +134,39 @@
       font-family: 'Inter', sans-serif;
       color: #fff;
       cursor: pointer;
-      transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      transition: background 0.25s, border-color 0.25s, color 0.25s;
       backdrop-filter: blur(4px);
       letter-spacing: 0.3px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
       white-space: nowrap;
-      transform: none !important;
     }
-
     #mg_log:hover {
-      background: rgba(255, 255, 255, 0.28);
-      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255,255,255,0.28);
+      border-color: rgba(255,255,255,0.4);
       color: #ffe69e;
     }
+    #mg_log:active { transform: scale(0.95); }
 
-    #mg_log:active {
-      transform: scale(0.95) !important;
-    }
-
-    /* ========================= 日志弹窗（完整功能） ========================= */
+    /* ===== 日志弹窗 ===== */
     dialog {
       border-radius: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      border: 2px solid rgba(255,255,255,0.4);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
       position: fixed;
       margin: 0;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255, 255, 255, 0.97);
+      background: rgba(255,255,255,0.97);
       backdrop-filter: blur(8px);
       padding: 0;
       z-index: 100;
     }
-
-    #show_log {
-      top: 10%;
-    }
-
+    #show_log { top: 10%; }
     .log_viewer {
       width: 400px;
       max-width: 80vw;
       padding: 20px 22px 18px 22px;
     }
-
     .log_header {
       display: flex;
       justify-content: space-between;
@@ -210,13 +179,11 @@
       flex-wrap: wrap;
       gap: 6px;
     }
-
     .log_time_display {
       font-weight: 600;
       font-size: 1rem;
       color: #1e293b;
     }
-
     .log_counter {
       background: #f1f5f9;
       padding: 2px 10px;
@@ -225,7 +192,6 @@
       font-weight: 500;
       color: #475569;
     }
-
     .arrow_btn {
       background: #f1f5f9;
       border: none;
@@ -240,15 +206,8 @@
       justify-content: center;
       color: #334155;
     }
-
-    .arrow_btn:hover {
-      background: #cbd5e1;
-    }
-
-    .arrow_btn:active {
-      transform: scale(0.92);
-    }
-
+    .arrow_btn:hover { background: #cbd5e1; }
+    .arrow_btn:active { transform: scale(0.92); }
     .log_body {
       display: flex;
       align-items: stretch;
@@ -256,7 +215,6 @@
       margin-bottom: 20px;
       min-height: 130px;
     }
-
     .log_content_preview {
       flex: 1;
       background: #f8fafc;
@@ -270,7 +228,6 @@
       color: #0f172a;
       border: 1px solid #e9edf2;
     }
-
     .log_actions {
       display: flex;
       justify-content: flex-end;
@@ -279,7 +236,6 @@
       padding-top: 14px;
       flex-wrap: wrap;
     }
-
     .action_btn {
       padding: 6px 18px;
       border-radius: 40px;
@@ -292,20 +248,12 @@
       transition: 0.2s;
       font-family: 'Inter', sans-serif;
     }
-
-    .action_btn:hover {
-      background-color: #2563eb;
-      transform: translateY(-1px);
-    }
-
+    .action_btn:hover { background-color: #2563eb; transform: translateY(-1px); }
     .action_btn.secondary {
       background-color: #e2e8f0;
       color: #1e293b;
     }
-
-    .action_btn.secondary:hover {
-      background-color: #cbd5e1;
-    }
+    .action_btn.secondary:hover { background-color: #cbd5e1; }
 
     /* ===== 编辑日志弹窗 ===== */
     #edit_log {
@@ -313,7 +261,6 @@
       max-height: 80vh;
       overflow-y: auto;
     }
-
     .edit_modal {
       background: white;
       border-radius: 28px;
@@ -321,7 +268,6 @@
       max-width: 92vw;
       padding: 28px 30px 24px 30px;
     }
-
     .edit_modal h3 {
       margin-top: 0;
       margin-bottom: 20px;
@@ -329,7 +275,6 @@
       font-weight: 600;
       color: #0f172a;
     }
-
     .edit_modal label {
       font-weight: 500;
       display: block;
@@ -337,7 +282,6 @@
       color: #0f172a;
       font-size: 0.9rem;
     }
-
     .edit_modal input,
     .edit_modal textarea {
       border: 1.5px solid #d1d9e6;
@@ -352,27 +296,23 @@
       margin: 0;
       background: #fafbfc;
     }
-
     .edit_modal input:focus,
     .edit_modal textarea:focus {
       outline: none;
       border-color: #3b82f6;
       background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
     }
-
     .edit_modal textarea {
       min-height: 110px;
       resize: vertical;
     }
-
     .modal_buttons {
       display: flex;
       justify-content: flex-end;
       gap: 12px;
       margin-top: 30px;
     }
-
     .modal_buttons button {
       padding: 8px 24px;
       border-radius: 40px;
@@ -383,24 +323,16 @@
       font-size: 0.9rem;
       font-family: 'Inter', sans-serif;
     }
-
     .save_btn {
       background-color: #3b82f6;
       color: white;
     }
-
-    .save_btn:hover {
-      background-color: #2563eb;
-    }
-
+    .save_btn:hover { background-color: #2563eb; }
     .cancel_btn {
       background-color: #e2e8f0;
       color: #1e293b;
     }
-
-    .cancel_btn:hover {
-      background-color: #cbd5e1;
-    }
+    .cancel_btn:hover { background-color: #cbd5e1; }
 
     /* ===== 登录卡片 ===== */
     .login-card {
@@ -412,53 +344,46 @@
       background-size: 100% 100%;
       transform-origin: 0 0;
       will-change: transform, left, top;
-      border: solid 2px red;
+      border: solid 2px red; /* 调试用 */
     }
-
-    .form-login,
-    .form-register {
+    .form-login, .form-register {
       position: relative;
       width: 100%;
       height: 100%;
     }
-
     .form-wrapper {
       position: absolute;
       top: 12%;
-      left: 30%;
+      left: 34%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 20px;
       pointer-events: none;
       transform-origin: center center;
-      transform: rotate(0.6deg);
+      transform: rotate(0.8deg);
     }
-
-    .form-wrapper>* {
+    .form-wrapper > * {
       pointer-events: auto;
       position: relative;
       left: 0;
       top: 0;
     }
-
     .form-title {
       font-size: 40px;
       font-weight: 700;
       color: #fff;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.35);
       letter-spacing: 2px;
       margin: 0 0 20px 0;
       text-align: center;
       width: 100%;
       user-select: none;
     }
-
     .input-group {
       position: relative;
-      width: 360px;
+      width: 300px;
     }
-
     .input-group .input-icon {
       position: absolute;
       left: 1rem;
@@ -466,43 +391,27 @@
       transform: translateY(-50%);
       color: #a0a5ba;
       font-size: 1.05rem;
-      transition: none;
       pointer-events: none;
       z-index: 1;
     }
-
     .login-card .field {
-      position: relative;
-      left: 0;
-      top: 0;
       width: 100%;
-      height: 48px;
+      height: 40px;
       box-sizing: border-box;
       padding: 8px 12px 8px 2.8rem;
-      margin: 10px 0px 10px 0rem;
-      border: 1.5px solid rgba(0, 0, 0, .2);
-      background: rgba(255, 255, 255, .92);
+      border: 1.5px solid rgba(0,0,0,0.2);
+      background: rgba(255,255,255,0.92);
       border-radius: 1.5rem;
       font-size: 18px;
       outline: none;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
     }
-
     .login-card .field:focus {
       border: 3px solid #ffe666;
-      background: rgba(255, 255, 255, 0.98);
+      background: rgba(255,255,255,0.98);
     }
-
-    .login-card .field.user,
-    .login-card .field.pass {
-      top: auto;
-    }
-
     .login-card .btn {
-      position: relative;
-      left: 0;
-      top: 0;
-      width: 360px;
+      width: 300px;
       height: 46px;
       border: none;
       border-radius: 12px;
@@ -513,19 +422,13 @@
       cursor: pointer;
       transition: background 0.2s, transform 0.1s;
       letter-spacing: 2px;
-      margin: 16px 0 0 0;
       border-radius: 2rem;
     }
-
     .login-card .btn:hover {
       filter: brightness(.90);
       transform: translateY(-1px);
     }
-
-    .login-card .btn:active {
-      transform: scale(0.99);
-    }
-
+    .login-card .btn:active { transform: scale(0.99); }
     .form-extra {
       display: flex;
       align-items: center;
@@ -533,7 +436,6 @@
       width: 102%;
       margin-top: 6px;
     }
-
     .remember-me {
       display: flex;
       align-items: center;
@@ -541,10 +443,9 @@
       cursor: pointer;
       color: #eef2ff;
       font-size: 14px;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
       user-select: none;
     }
-
     .remember-me input[type="checkbox"] {
       width: 16px;
       height: 16px;
@@ -552,29 +453,26 @@
       cursor: pointer;
       margin: 0;
     }
-
     .forgot-password {
       color: #ffd966;
       font-size: 14px;
       text-decoration: none;
       transition: color 0.2s, text-decoration 0.2s;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
-
     .forgot-password:hover {
       color: #ffe69e;
       text-decoration: underline;
     }
-
     .footer-note {
       position: absolute;
       bottom: 8%;
-      left: 0;
+      left: 2%;
       right: 0;
       text-align: center;
       font-size: 14px;
       color: #eef2ff;
-      background: rgba(0, 0, 0, 0.30);
+      background: rgba(0,0,0,0.30);
       padding: 10px 20px;
       border-radius: 60px;
       width: fit-content;
@@ -587,13 +485,9 @@
       pointer-events: auto;
       z-index: 10;
       transform-origin: center center;
-      transform: rotate(0.6deg);
+      transform: rotate(0.8deg);
     }
-
-    .footer-note span {
-      opacity: 0.9;
-    }
-
+    .footer-note span { opacity: 0.9; }
     .switch-text {
       background: none;
       border: none;
@@ -606,54 +500,42 @@
       transition: 0.2s;
       font-family: inherit;
     }
-
     .switch-text:hover {
       text-decoration: underline;
       color: #ffe69e;
     }
-
-    .switch-text:active {
-      transform: scale(0.95);
-    }
-
+    .switch-text:active { transform: scale(0.95); }
     .switch-text.guest:hover {
       opacity: 1;
       color: #ffe69e;
       text-decoration: underline;
     }
-
     .footer-divider {
-      color: rgba(255, 255, 255, 0.25);
+      color: rgba(255,255,255,0.25);
       margin: 0 2px;
       user-select: none;
     }
-
-    .form-register {
-      display: none;
-    }
+    .form-register { display: none; }
   </style>
 </head>
-
 <body>
 <div class="stage" id="stage">
   <!-- 背景图 -->
   <img id="hero" src="resources/img/login.png" alt="login">
 
-  <!-- ================================================================
-  ★ 日志预览框 — 与 login-card 完全一致的锚定方式 ★
-  ================================================================ -->
-  <div id="logPreviewBox">
-    <span class="log-preview-time" id="previewTime">📅 暂无日志</span>
-    <div class="log-preview-body" id="previewContent">
-      没有日志，请点击下方按钮添加
-    </div>
-    <div class="log-preview-footer">
-      <span class="log-count-badge" id="previewCount">共 0 条</span>
-      <button type="button" id="mg_log">📄 展示日志</button>
+  <!-- ===== 日志预览框 ===== -->
+  <div id="logBox">
+    <div class="logPreviewBox">
+      <span class="log-preview-time" id="previewTime">📅 暂无日志</span>
+      <div class="log-preview-body" id="previewContent">没有日志，请点击下方按钮添加</div>
+      <div class="log-preview-footer">
+        <span class="log-count-badge" id="previewCount">共 0 条</span>
+        <button type="button" id="mg_log">📄 展示日志</button>
+      </div>
     </div>
   </div>
 
-  <!-- ===== 日志弹窗（完整功能：查看全部、翻页、添加、删除） ===== -->
+  <!-- ===== 日志弹窗（查看全部、翻页、添加、删除） ===== -->
   <dialog id="show_log">
     <div class="log_viewer">
       <div class="log_header">
@@ -663,9 +545,7 @@
         <button type="button" class="arrow_btn right_arrow">▶</button>
       </div>
       <div class="log_body">
-        <div class="log_content_preview">
-          这里展示日志正文内容
-        </div>
+        <div class="log_content_preview">这里展示日志正文内容</div>
       </div>
       <div class="log_actions">
         <button type="button" id="add_log" class="action_btn">＋ 添加日志</button>
@@ -692,13 +572,12 @@
 
   <!-- ===== 登录卡片 ===== -->
   <div class="login-card" id="card">
-
     <!-- 登录表单 -->
     <div id="loginForm" class="form-login">
+      <%-- 使用绝对路径提交表单 --%>
       <form method="post" action="<%= request.getContextPath() %>/user">
         <div class="form-wrapper">
           <div class="form-title">欢迎回来</div>
-          <!-- 隐藏字段，标识操作 -->
           <input type="hidden" name="action" value="login" />
           <div class="input-group">
             <i class="fas fa-envelope input-icon"></i>
@@ -710,8 +589,7 @@
           </div>
           <div class="form-extra">
             <label class="remember-me">
-              <input type="checkbox" name="rememberMe" />
-              记住我
+              <input type="checkbox" name="rememberMe" /> 记住我
             </label>
             <a href="#" class="forgot-password">忘记密码？</a>
           </div>
@@ -725,7 +603,6 @@
       <form method="post" action="<%= request.getContextPath() %>/user">
         <div class="form-wrapper">
           <div class="form-title">创建人生</div>
-          <!-- 隐藏字段，标识操作 -->
           <input type="hidden" name="action" value="register" />
           <div class="input-group">
             <i class="fas fa-user input-icon"></i>
@@ -744,37 +621,32 @@
       </form>
     </div>
 
-    <!-- ===== footer-note：切换面板 + 游客登录 ===== -->
+    <!-- 底部切换按钮 -->
     <div class="footer-note">
       <span id="footerHint">没有账号？</span>
       <button class="switch-text" id="switchFooterBtn">立即注册</button>
       <span class="footer-divider">|</span>
       <button class="switch-text guest" id="guestLoginBtn">游客登录</button>
     </div>
-
   </div>
-  <!-- /login-card -->
 </div>
-<!-- /stage -->
 
 <script>
   // ================================================================
-  // ★★★ 上下文路径（用于 AJAX） ★★★
+  // 上下文路径（所有 AJAX 请求使用此变量）
   // ================================================================
   var ctx = '<%= request.getContextPath() %>';
 
   // ================================================================
-  // ★★★ 记住我：页面加载时自动填充账号（从 Cookie 读取） ★★★
+  // 记住我：页面加载时自动填充账号（从 Cookie 读取）
   // ================================================================
   (function() {
-    // 辅助：读取指定名称的 Cookie
     function getCookie(name) {
       var value = "; " + document.cookie;
       var parts = value.split("; " + name + "=");
       if (parts.length == 2) return parts.pop().split(";").shift();
       return null;
     }
-
     var savedEmail = getCookie('remember_me_email');
     if (savedEmail) {
       var emailInput = document.getElementById('loginEmail');
@@ -785,50 +657,44 @@
   })();
 
   // ================================================================
-  //  ★ 日志模块：与后端 API 完全整合 ★
+  // 日志模块：与后端 API 完全整合
   // ================================================================
   (function() {
     // ---- DOM 元素 ----
-    const show_log = document.getElementById('show_log');
-    const edit_log = document.getElementById('edit_log');
-    const mg_log = document.getElementById('mg_log');
-    const add_log = document.getElementById('add_log');
-    const closeshowlog = document.getElementById('closeshowlog');
-    const cancelModalBtn = document.getElementById('cancelModalBtn');
-    const saveModalBtn = document.getElementById('saveModalBtn');
+    var show_log = document.getElementById('show_log');
+    var edit_log = document.getElementById('edit_log');
+    var mg_log = document.getElementById('mg_log');
+    var add_log = document.getElementById('add_log');
+    var closeshowlog = document.getElementById('closeshowlog');
+    var cancelModalBtn = document.getElementById('cancelModalBtn');
+    var saveModalBtn = document.getElementById('saveModalBtn');
 
-    const logTimeDisplay = document.querySelector('.log_time_display');
-    const logContentPreview = document.querySelector('.log_content_preview');
-    const logCounter = document.querySelector('.log_counter');
-    const leftArrow = document.querySelector('.left_arrow');
-    const rightArrow = document.querySelector('.right_arrow');
+    var logTimeDisplay = document.querySelector('.log_time_display');
+    var logContentPreview = document.querySelector('.log_content_preview');
+    var logCounter = document.querySelector('.log_counter');
+    var leftArrow = document.querySelector('.left_arrow');
+    var rightArrow = document.querySelector('.right_arrow');
 
-    const logTimeInput = document.getElementById('logTimeInput');
-    const logContentInput = document.getElementById('logContentInput');
+    var logTimeInput = document.getElementById('logTimeInput');
+    var logContentInput = document.getElementById('logContentInput');
 
-    // ---- 预览框元素 ----
-    const previewTime = document.getElementById('previewTime');
-    const previewContent = document.getElementById('previewContent');
-    const previewCount = document.getElementById('previewCount');
+    var previewTime = document.getElementById('previewTime');
+    var previewContent = document.getElementById('previewContent');
+    var previewCount = document.getElementById('previewCount');
 
     // ---- 数据 ----
-    let logsData = [];
-    let currentLogIndex = 0;
+    var logsData = [];
+    var currentLogIndex = 0;
 
-    // ================================================================
-    //  ★ API 交互函数（所有 fetch 都使用 ctx） ★
-    // ================================================================
-
+    // ---- API 函数 ----
     async function fetchLogs() {
       try {
-        const res = await fetch(ctx + '/logs?limit=50&offset=0');
+        var res = await fetch(ctx + '/logs?limit=50&offset=0');
         if (!res.ok) throw new Error('获取日志失败');
-        const data = await res.json();
-        logsData = data.map(item => ({
-          id: item.id,
-          time: item.time,
-          content: item.content
-        }));
+        var data = await res.json();
+        logsData = data.map(function(item) {
+          return { id: item.id, time: item.time, content: item.content };
+        });
         if (logsData.length > 0) currentLogIndex = 0;
         renderAll();
       } catch (e) {
@@ -840,12 +706,12 @@
 
     async function addLogToServer(time, content) {
       try {
-        const res = await fetch(ctx + '/logs', {
+        var res = await fetch(ctx + '/logs', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-          body: JSON.stringify({ time, content })
+          body: JSON.stringify({ time: time, content: content })
         });
-        const result = await res.json();
+        var result = await res.json();
         if (result.ok) {
           logsData.unshift({ id: result.id, time: time, content: content });
           currentLogIndex = 0;
@@ -868,10 +734,10 @@
         return;
       }
       try {
-        const res = await fetch(ctx + '/logs?id=' + id, { method: 'DELETE' });
-        const result = await res.json();
+        var res = await fetch(ctx + '/logs?id=' + id, { method: 'DELETE' });
+        var result = await res.json();
         if (result.ok) {
-          const index = logsData.findIndex(log => log.id === id);
+          var index = logsData.findIndex(function(log) { return log.id === id; });
           if (index > -1) {
             logsData.splice(index, 1);
             if (currentLogIndex >= logsData.length) currentLogIndex = logsData.length - 1;
@@ -893,28 +759,23 @@
         previewTime.textContent = '📅 暂无日志';
         previewContent.textContent = '没有日志，请点击下方按钮添加';
         previewCount.textContent = '共 0 条';
-      } else {
-        const first = logsData[0];
-        const displayTime = first.time ? first.time.replace('T', ' ') : '未知时间';
-        previewTime.textContent = '📅 ' + displayTime;
-        previewContent.textContent = first.content || '（空内容）';
-        previewCount.textContent = '共 ' + logsData.length + ' 条';
-      }
-
-      if (!Array.isArray(logsData) || logsData.length === 0) {
         if (logTimeDisplay) logTimeDisplay.textContent = '暂无日志';
         if (logContentPreview) logContentPreview.textContent = '没有日志，请点击"添加日志"添加';
         if (logCounter) logCounter.textContent = '0 / 0';
         return;
       }
 
+      var first = logsData[0];
+      var displayTime = first.time ? first.time.replace('T', ' ') : '未知时间';
+      previewTime.textContent = '📅 ' + displayTime;
+      previewContent.textContent = first.content || '（空内容）';
+      previewCount.textContent = '共 ' + logsData.length + ' 条';
+
       if (currentLogIndex >= logsData.length) currentLogIndex = logsData.length - 1;
       if (currentLogIndex < 0) currentLogIndex = 0;
-
-      const log = logsData[currentLogIndex];
+      var log = logsData[currentLogIndex];
       if (!log) return;
-
-      const formattedTime = log.time.replace('T', ' ');
+      var formattedTime = log.time.replace('T', ' ');
       if (logTimeDisplay) logTimeDisplay.textContent = formattedTime;
       if (logContentPreview) logContentPreview.textContent = log.content;
       if (logCounter) logCounter.textContent = (currentLogIndex + 1) + ' / ' + logsData.length;
@@ -925,7 +786,6 @@
       currentLogIndex = (currentLogIndex - 1 + logsData.length) % logsData.length;
       renderAll();
     }
-
     function nextLog() {
       if (!logsData.length) return;
       currentLogIndex = (currentLogIndex + 1) % logsData.length;
@@ -939,7 +799,6 @@
         renderAll();
       });
     }
-
     if (leftArrow) leftArrow.addEventListener('click', prevLog);
     if (rightArrow) rightArrow.addEventListener('click', nextLog);
 
@@ -948,28 +807,25 @@
         edit_log.showModal();
       });
     }
-
     if (closeshowlog) {
       closeshowlog.addEventListener('click', function() {
         show_log.close();
       });
     }
-
     if (cancelModalBtn) {
       cancelModalBtn.addEventListener('click', function() {
         edit_log.close();
       });
     }
-
     if (saveModalBtn) {
       saveModalBtn.addEventListener('click', async function() {
-        const newTime = logTimeInput.value;
-        const newContent = logContentInput.value;
+        var newTime = logTimeInput.value;
+        var newContent = logContentInput.value;
         if (!newTime || !newContent.trim()) {
           alert("请填写完整的时间和正文内容");
           return;
         }
-        const success = await addLogToServer(newTime, newContent);
+        var success = await addLogToServer(newTime, newContent);
         if (success) {
           edit_log.close();
           if (show_log.open) renderAll();
@@ -977,7 +833,7 @@
       });
     }
 
-    const deleteLogBtn = document.getElementById('delete_current_log');
+    var deleteLogBtn = document.getElementById('delete_current_log');
     if (deleteLogBtn) {
       deleteLogBtn.addEventListener('click', function(e) {
         e.stopPropagation?.();
@@ -985,12 +841,12 @@
           alert('没有日志可删除');
           return;
         }
-        const log = logsData[currentLogIndex];
+        var log = logsData[currentLogIndex];
         if (!log || !log.id) {
           alert('无法获取当前日志 ID');
           return;
         }
-        const confirmDelete = confirm(
+        var confirmDelete = confirm(
                 '确定要删除这条日志吗？\n时间：' + (log.time?.replace('T', ' ') || '未知') +
                 '\n正文预览：' + (log.content || '').substring(0, 50) +
                 ((log.content || '').length > 50 ? '…' : '')
@@ -1000,13 +856,14 @@
       });
     }
 
+    // ---- 初始化加载日志 ----
     fetchLogs();
 
-    // ---- 草稿保存 ----
-    const DRAFT_API = ctx + '/draft';
+    // ---- 草稿自动保存 ----
+    var DRAFT_API = ctx + '/draft';
 
     async function saveDraft() {
-      const payload = {
+      var payload = {
         time: logTimeInput.value || null,
         content: logContentInput.value || ""
       };
@@ -1022,14 +879,15 @@
 
     async function loadDraftToInputs() {
       try {
-        const r = await fetch(DRAFT_API, { credentials: 'same-origin' });
+        var r = await fetch(DRAFT_API, { credentials: 'same-origin' });
         if (!r.ok) return;
-        const data = await r.json();
+        var data = await r.json();
         if (data && data.time != null) logTimeInput.value = data.time;
         if (data && data.content != null) logContentInput.value = data.content;
       } catch (_) {}
     }
 
+    // 点击“添加日志”时先加载草稿
     if (add_log) {
       add_log.addEventListener('click', async function() {
         await loadDraftToInputs();
@@ -1037,7 +895,7 @@
       });
     }
 
-    let draftTimer = null;
+    var draftTimer = null;
     function scheduleDraftSave() {
       clearTimeout(draftTimer);
       draftTimer = setTimeout(function() {
@@ -1047,30 +905,39 @@
     if (logTimeInput) logTimeInput.addEventListener('input', scheduleDraftSave);
     if (logContentInput) logContentInput.addEventListener('input', scheduleDraftSave);
 
+    // 页面关闭前使用 sendBeacon 保存草稿
     window.addEventListener('beforeunload', function() {
       try {
-        const payload = JSON.stringify({
+        var payload = JSON.stringify({
           time: logTimeInput.value || null,
           content: logContentInput.value || ""
         });
-        const blob = new Blob([payload], { type: 'application/json;charset=UTF-8' });
+        var blob = new Blob([payload], { type: 'application/json;charset=UTF-8' });
         navigator.sendBeacon(DRAFT_API, blob);
       } catch (_) {}
     });
 
+    // 点击内部链接前保存草稿
     document.addEventListener('click', async function(e) {
-      const a = e.target.closest && e.target.closest('a');
+      var a = e.target.closest && e.target.closest('a');
       if (!a) return;
-      const href = a.getAttribute('href');
+      var href = a.getAttribute('href');
       if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
-      let url;
-      try { url = new URL(href, location.href); } catch (_) { return; }
+      var url;
+      try {
+        url = new URL(href, location.href);
+      } catch (_) {
+        return;
+      }
       if (url.origin !== location.origin) return;
       e.preventDefault();
-      try { await saveDraft(); } catch (_) {}
+      try {
+        await saveDraft();
+      } catch (_) {}
       location.href = url.href;
     }, true);
 
+    // 暴露变量便于调试
     window.logsData = logsData;
     window.renderAll = renderAll;
     window.fetchLogs = fetchLogs;
@@ -1078,7 +945,7 @@
 
 
   // ================================================================
-  //  ★ 通用封装：背景图 Cover 锚定布局（不变） ★
+  // 背景图锚定布局（保持不变）
   // ================================================================
   function createCoverAnchorLayout(backgroundImage, stage, target, anchor, options) {
     if (!backgroundImage || !stage || !target) {
@@ -1140,40 +1007,28 @@
   var stage = document.getElementById('stage');
   var hero = document.getElementById('hero');
   var card = document.getElementById('card');
-  var previewBox = document.getElementById('logPreviewBox');
+  var previewBox = document.getElementById('logBox');
 
-  var cardLocker = createCoverAnchorLayout(hero, stage, card, {
-    ax: 980,
-    ay: 175
-  }, {});
-
-  var previewLocker = createCoverAnchorLayout(hero, stage, previewBox, {
-    ax: 300,
-    ay: 80
-  }, {
-    offsetX: 0,
-    offsetY: 0
-  });
+  var cardLocker = createCoverAnchorLayout(hero, stage, card, { ax: 979, ay: 173 }, {});
+  var previewLocker = createCoverAnchorLayout(hero, stage, previewBox, { ax: -2, ay: 618 }, { offsetX: 0, offsetY: 0 });
 
 
   // ================================================================
-  //  ★ 用户认证模块（切换面板 + 游客登录） ★
+  // 用户认证模块（切换面板 + 游客登录）
   // ================================================================
   (function() {
-    // 游客登录
-    const guestBtn = document.getElementById('guestLoginBtn');
+    var guestBtn = document.getElementById('guestLoginBtn');
     if (guestBtn) {
       guestBtn.addEventListener('click', function() {
         window.location.href = 'https://www.baidu.com';
       });
     }
 
-    // 登录/注册面板切换
-    const switchBtn = document.getElementById('switchFooterBtn');
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const footerHint = document.getElementById('footerHint');
-    let isLogin = true;
+    var switchBtn = document.getElementById('switchFooterBtn');
+    var loginForm = document.getElementById('loginForm');
+    var registerForm = document.getElementById('registerForm');
+    var footerHint = document.getElementById('footerHint');
+    var isLogin = true;
 
     function toggleForm() {
       if (isLogin) {
