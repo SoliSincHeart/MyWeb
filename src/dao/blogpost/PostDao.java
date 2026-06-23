@@ -1,7 +1,6 @@
 package dao.blogpost;
 
 import bean.blogpost.Post;
-import util.JdbcUtil;
 
 import java.sql.*;
 import java.util.ArrayList;

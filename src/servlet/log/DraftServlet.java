@@ -1,9 +1,9 @@
 package servlet.log;
 
-import servlet.base.BaseServlet;
 import bean.log.LogDraft;
 import com.google.gson.JsonSyntaxException;
 import service.log.DraftService;
+import servlet.base.BaseServlet;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
