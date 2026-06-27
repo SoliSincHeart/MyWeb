@@ -3,23 +3,30 @@ package bean.blogpost;
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * 文章实体类，对应 posts 表，并包含一些不持久化的展示字段。
+ * 为了提高查询性能，点赞数和评论数采用冗余计数的方式存储，
+ * 每次点赞/评论时同步更新 posts 表中的计数字段，避免频繁的 COUNT 查询。
+ */
 public class Post {
-    private Integer id;
-    private String title;
-    private String content;
-    private Integer authorId;
-    private Integer likesCount;
-    private Integer viewsCount;
-    private Integer commentsCount;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private Integer id;          // 文章ID，自增主键
+    private String title;        // 文章标题
+    private String content;      // 文章正文
+    private Integer authorId;    // 作者用户ID，关联 users 表
+    private Integer likesCount;  // 点赞数（冗余字段）
+    private Integer viewsCount;  // 浏览数，每次查看文章详情时递增
+    private Integer commentsCount; // 评论数（冗余字段）
+    private Timestamp createdAt; // 创建时间
+    private Timestamp updatedAt; // 最后更新时间
 
-    private String authorName;
-    private List<Comment> comments;
-    private boolean likedByCurrentUser;
+    // 以下字段仅用于数据传递和前端展示，不持久化到 posts 表
+    private String authorName;       // 作者用户名，由查询时 LEFT JOIN users 获得
+    private List<Comment> comments;  // 该文章下的所有评论列表，仅在详情接口中填充
+    private boolean likedByCurrentUser; // 当前登录用户是否已点赞该文章
 
     public Post() {}
 
+    // getter/setter
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
     public String getTitle() { return title; }
