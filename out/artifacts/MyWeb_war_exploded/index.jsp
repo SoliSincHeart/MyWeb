@@ -8,6 +8,7 @@
   <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
+
     /* ===== 全局防选中 ===== */
     html, body, .stage, .login-card, .form-wrapper, .footer-note,
     button, .btn, .switch-text, .arrow_btn, .action_btn, #mg_log,
@@ -521,7 +522,7 @@
 <body>
 <div class="stage" id="stage">
   <!-- 背景图 -->
-  <img id="hero" src="resources/img/login.png" alt="login">
+  <img id="hero" src="resources/img/home_login.png" alt="login">
 
   <!-- ===== 日志预览框 ===== -->
   <div id="logBox">

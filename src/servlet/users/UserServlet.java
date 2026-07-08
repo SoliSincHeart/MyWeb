@@ -51,7 +51,7 @@ public class UserServlet extends HttpServlet {
             }
 
             // 重定向到首页
-            response.sendRedirect(request.getContextPath() + "/test1.jsp");
+            response.sendRedirect(request.getContextPath() + "/home.jsp");
         } else {
             // 登录失败，返回提示信息
             response.getWriter().write("邮箱或密码错误，或者账号已被禁用");
