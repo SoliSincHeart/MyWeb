@@ -1155,7 +1155,7 @@
 </head>
 <body>
 <div class="stage" id="stage">
-    <img id="hero" src="resources/img/home.png" alt="background">
+    <img id="hero" src="resources/img/home.gif" alt="background">
     <div class="computer" id="computer" title="点击进入电脑">
         <!-- 热区可视化由 JS 动态创建 -->
     </div>

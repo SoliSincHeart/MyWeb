@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
 
-    /* ===== 全局防选中 ===== */
+    /* ===== 全局防选中（不变） ===== */
     html, body, .stage, .login-card, .form-wrapper, .footer-note,
     button, .btn, .switch-text, .arrow_btn, .action_btn, #mg_log,
     .form-title, .log-preview-time, .log-preview-body, .log-count-badge,
@@ -61,7 +61,7 @@
       -webkit-user-drag: none;
     }
 
-    /* ===== 日志预览框 ===== */
+    /* ===== 日志预览框（不变） ===== */
     #logBox {
       position: absolute;
       width: 434px;
@@ -71,7 +71,6 @@
       background-size: 100% 100%;
       transform-origin: 0 0;
       will-change: transform, left, top;
-      border: solid 2px red; /* 调试用，可删除 */
     }
     .logPreviewBox {
       position: relative;
@@ -84,7 +83,6 @@
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      border: 1px solid red; /* 调试用 */
       font-weight: 800;
     }
     .log-preview-time {
@@ -96,7 +94,6 @@
       color: #eef2ff;
     }
     .log-preview-body {
-      border: 1px solid red;
       position: relative;
       font-size: 16px;
       line-height: 1.5;
@@ -148,7 +145,7 @@
     }
     #mg_log:active { transform: scale(0.95); }
 
-    /* ===== 日志弹窗 ===== */
+    /* ===== 日志弹窗（不变） ===== */
     dialog {
       border-radius: 20px;
       border: 2px solid rgba(255,255,255,0.4);
@@ -256,7 +253,7 @@
     }
     .action_btn.secondary:hover { background-color: #cbd5e1; }
 
-    /* ===== 编辑日志弹窗 ===== */
+    /* ===== 编辑日志弹窗（不变） ===== */
     #edit_log {
       top: 25%;
       max-height: 80vh;
@@ -335,18 +332,32 @@
     }
     .cancel_btn:hover { background-color: #cbd5e1; }
 
-    /* ===== 登录卡片 ===== */
+    /* ===== 登录卡片（独立样式） ===== */
     .login-card {
       position: absolute;
       width: 860px;
       height: 505px;
-      background-image: url("resources/img/界面.png");
+      background-image: url("resources/img/壁纸界面.png");
       background-repeat: no-repeat;
       background-size: 100% 100%;
       transform-origin: 0 0;
       will-change: transform, left, top;
-      border: solid 2px red; /* 调试用 */
     }
+
+    /* ===== 新增装饰卡片（独立样式，与 login-card 完全相同但可独立修改） ===== */
+    .scenery {
+      position: absolute;
+      width: 735px;
+      height: 670px;
+      z-index: -2;
+      background-image: url("resources/img/窗外.png");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      transform-origin: 0 0;
+      will-change: transform, left, top;
+    }
+
+    /* ===== login-card 内部样式（保留不变） ===== */
     .form-login, .form-register {
       position: relative;
       width: 100%;
@@ -408,7 +419,7 @@
       transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
     }
     .login-card .field:focus {
-      border: 3px solid #ffe666;
+      border: 2px solid #544390;
       background: rgba(255,255,255,0.98);
     }
     .login-card .btn {
@@ -522,7 +533,7 @@
 <body>
 <div class="stage" id="stage">
   <!-- 背景图 -->
-  <img id="hero" src="resources/img/home_login.png" alt="login">
+  <img id="hero" src="resources/img/home_login.gif" alt="login">
 
   <!-- ===== 日志预览框 ===== -->
   <div id="logBox">
@@ -536,7 +547,7 @@
     </div>
   </div>
 
-  <!-- ===== 日志弹窗（查看全部、翻页、添加、删除） ===== -->
+  <!-- ===== 日志弹窗 ===== -->
   <dialog id="show_log">
     <div class="log_viewer">
       <div class="log_header">
@@ -556,17 +567,17 @@
     </div>
   </dialog>
 
-  <!-- ===== 编辑日志弹窗（添加/编辑） ===== -->
+  <!-- ===== 编辑日志弹窗 ===== -->
   <dialog id="edit_log">
     <div class="edit_modal">
-      <h3 id="modalTitle">📝 编辑日志</h3>
-      <label>📅 时间</label>
+      <h3 id="modalTitle"> 编辑日志</h3>
+      <label> 时间</label>
       <input type="datetime-local" id="logTimeInput" step="1">
-      <label>📄 正文</label>
+      <label> 正文</label>
       <textarea id="logContentInput" placeholder="写点什么..."></textarea>
       <div class="modal_buttons">
         <button type="button" class="cancel_btn" id="cancelModalBtn">取消</button>
-        <button type="button" class="save_btn" id="saveModalBtn">✅ 保存</button>
+        <button type="button" class="save_btn" id="saveModalBtn"> 保存</button>
       </div>
     </div>
   </dialog>
@@ -575,7 +586,6 @@
   <div class="login-card" id="card">
     <!-- 登录表单 -->
     <div id="loginForm" class="form-login">
-      <%-- 使用绝对路径提交表单 --%>
       <form method="post" action="<%= request.getContextPath() %>/user">
         <div class="form-wrapper">
           <div class="form-title">欢迎回来</div>
@@ -630,16 +640,20 @@
       <button class="switch-text guest" id="guestLoginBtn">游客登录</button>
     </div>
   </div>
+
+  <!-- ===== 新增：装饰性空卡片（样式独立，与 login-card 初始相同，可单独修改） ===== -->
+  <div class="scenery" id="scenery"></div>
+
 </div>
 
 <script>
   // ================================================================
-  // 上下文路径（所有 AJAX 请求使用此变量）
+  // 上下文路径
   // ================================================================
   var ctx = '<%= request.getContextPath() %>';
 
   // ================================================================
-  // 记住我：页面加载时自动填充账号（从 Cookie 读取）
+  // 记住我（不变）
   // ================================================================
   (function() {
     function getCookie(name) {
@@ -658,10 +672,9 @@
   })();
 
   // ================================================================
-  // 日志模块：与后端 API 完全整合
+  // 日志模块（不变）
   // ================================================================
   (function() {
-    // ---- DOM 元素 ----
     var show_log = document.getElementById('show_log');
     var edit_log = document.getElementById('edit_log');
     var mg_log = document.getElementById('mg_log');
@@ -683,11 +696,9 @@
     var previewContent = document.getElementById('previewContent');
     var previewCount = document.getElementById('previewCount');
 
-    // ---- 数据 ----
     var logsData = [];
     var currentLogIndex = 0;
 
-    // ---- API 函数 ----
     async function fetchLogs() {
       try {
         var res = await fetch(ctx + '/logs?limit=50&offset=0');
@@ -754,7 +765,6 @@
       }
     }
 
-    // ---- 渲染 ----
     function renderAll() {
       if (!Array.isArray(logsData) || logsData.length === 0) {
         previewTime.textContent = '📅 暂无日志';
@@ -793,7 +803,6 @@
       renderAll();
     }
 
-    // ---- 事件绑定 ----
     if (mg_log) {
       mg_log.addEventListener('click', function() {
         show_log.showModal();
@@ -857,10 +866,8 @@
       });
     }
 
-    // ---- 初始化加载日志 ----
     fetchLogs();
 
-    // ---- 草稿自动保存 ----
     var DRAFT_API = ctx + '/draft';
 
     async function saveDraft() {
@@ -888,7 +895,6 @@
       } catch (_) {}
     }
 
-    // 点击“添加日志”时先加载草稿
     if (add_log) {
       add_log.addEventListener('click', async function() {
         await loadDraftToInputs();
@@ -906,7 +912,6 @@
     if (logTimeInput) logTimeInput.addEventListener('input', scheduleDraftSave);
     if (logContentInput) logContentInput.addEventListener('input', scheduleDraftSave);
 
-    // 页面关闭前使用 sendBeacon 保存草稿
     window.addEventListener('beforeunload', function() {
       try {
         var payload = JSON.stringify({
@@ -918,7 +923,6 @@
       } catch (_) {}
     });
 
-    // 点击内部链接前保存草稿
     document.addEventListener('click', async function(e) {
       var a = e.target.closest && e.target.closest('a');
       if (!a) return;
@@ -938,7 +942,6 @@
       location.href = url.href;
     }, true);
 
-    // 暴露变量便于调试
     window.logsData = logsData;
     window.renderAll = renderAll;
     window.fetchLogs = fetchLogs;
@@ -946,7 +949,7 @@
 
 
   // ================================================================
-  // 背景图锚定布局（保持不变）
+  // 背景图锚定布局（原有 + 新增 scenery，各自独立调用）
   // ================================================================
   function createCoverAnchorLayout(backgroundImage, stage, target, anchor, options) {
     if (!backgroundImage || !stage || !target) {
@@ -1009,19 +1012,32 @@
   var hero = document.getElementById('hero');
   var card = document.getElementById('card');
   var previewBox = document.getElementById('logBox');
+  var scenery = document.getElementById('scenery');
 
-  var cardLocker = createCoverAnchorLayout(hero, stage, card, { ax: 979, ay: 173 }, {});
+  // 原有：登录卡锚定
+  var cardLocker = createCoverAnchorLayout(hero, stage, card, { ax: 981, ay: 180 }, {});
+
+  // 原有：日志预览框锚定
   var previewLocker = createCoverAnchorLayout(hero, stage, previewBox, { ax: -2, ay: 618 }, { offsetX: 0, offsetY: 0 });
+
+  // 新增：装饰卡锚定（可独立调整 ax / ay）
+  var sceneryLocker = createCoverAnchorLayout(
+          hero,
+          stage,
+          scenery,
+          { ax: 0, ay: 0 },   // ← 您可自由修改此坐标
+          { offsetX: 0, offsetY: 0 }
+  );
 
 
   // ================================================================
-  // 用户认证模块（切换面板 + 游客登录）
+  // 用户认证模块（不变）
   // ================================================================
   (function() {
     var guestBtn = document.getElementById('guestLoginBtn');
     if (guestBtn) {
       guestBtn.addEventListener('click', function() {
-        window.location.href = 'https://www.baidu.com';
+        window.location.href = 'http://localhost:8080/MyWeb/home.jsp';
       });
     }
 

@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
 <html>
 <head>
     <title>桌面</title>
@@ -102,38 +103,17 @@
             filter: brightness(0.9);
         }
 
-        /* 热区样式 */
-        #hotspotVisual {
+        /* ===== 新增装饰卡片（与登录页面一致） ===== */
+        .scenery {
             position: absolute;
-            z-index: 20;
-            pointer-events: none;
-            border: 3px dashed #ff4444;
-            background: rgba(255, 68, 68, 0.0);
-            transition: background 0.2s;
-            box-sizing: border-box;
-        }
-
-        #hotspotVisual.active {
-            background: rgba(255, 68, 68, 0.25);
-        }
-
-        #toggleHotspotBtn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-            padding: 10px 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-        }
-
-        #toggleHotspotBtn:hover {
-            background: rgba(0, 0, 0, 0.9);
+            width: 735px;
+            height: 670px;
+            z-index: -2;            /* 默认在背景图之下（不可见），若需显示请改为 1 */
+            background-image: url("resources/img/窗外.png");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            transform-origin: 0 0;
+            will-change: transform, left, top;
         }
 
         /* 全屏弹窗 */
@@ -245,7 +225,7 @@
         }
 
         #closeModalBtn:active {
-            transform: scale(0.92);
+            transform: scale(0.98);
         }
 
         #footTime {
@@ -330,7 +310,7 @@
         }
 
         .left-floating-bar,
-        .right-floating-bar {
+        .right-floating-bar{
             position: absolute;
             top: 0;
             z-index: 20;
@@ -353,6 +333,63 @@
 
         .left-floating-bar {
             left: 1%;
+        }
+
+        /* ===== 额外信息框（左侧栏下方） ===== */
+        .extra-info-box {
+            position: absolute;
+            left: 2.2%;
+            top: 300px;
+            width: 18%;
+            height: 330px;
+            box-sizing: border-box;
+            z-index: 20;
+            overflow: hidden;
+            background-image: url("resources/img/悬浮栏.png");
+            background-size: contain;
+            background-repeat: no-repeat;
+            padding: 0;
+        }
+
+        .extra-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .extra-title {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c4a64;
+            letter-spacing: 0.5px;
+            margin: 0;
+            padding: 0 10px;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .extra-content {
+            padding: 0 16px;
+            margin-top: 30px;
+            font-size: 18px;
+            color: #4a6275;
+            text-align: center;
+            line-height: 1.5;
+            word-break: break-word;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
 
         .right-floating-bar {
@@ -1287,11 +1324,361 @@
         .btn-submit-comment:hover {
             background: #1e5a7d;
         }
+
+        /* ==================== 日志功能补充 CSS ==================== */
+        /* 日志预览框 */
+        #logBox {
+            position: absolute;
+            width: 434px;
+            height: 471px;
+            background-image: url("resources/img/log.png");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            transform-origin: 0 0;
+            will-change: transform, left, top;
+            transition: filter 0s;
+            /* border: solid 2px red; */ /* 调试用，已注释 */
+        }
+        #logBox:hover{
+            filter: brightness(0.95);
+        }
+        .logPreviewBox {
+            position: relative;
+            top: 18%;
+            left: 22%;
+            width: 280px;
+            height: 300px;
+            padding: 30px 25px 20px 25px;
+            transform: rotate(-5deg);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            /* border: 1px solid red; */ /* 调试用 */
+            font-weight: 800;
+        }
+        .log-preview-time {
+            display: block;
+            font-size: 12px;
+            opacity: 0.8;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            color: #eef2ff;
+        }
+        .log-preview-body {
+            /* border: 1px solid red; */ /* 调试用 */
+            position: relative;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #ffffff;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 42px;
+            max-height: 63px;
+            word-break: break-word;
+            margin-bottom: 10px;
+        }
+        .log-preview-footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            padding-top: 10px;
+        }
+        .log-preview-footer .log-count-badge {
+            font-size: 11px;
+            opacity: 0.6;
+            color: #eef2ff;
+            font-weight: 400;
+        }
+        #mg_log {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 40px;
+            padding: 4px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.25s, border-color 0.25s, color 0.25s;
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+        #mg_log:hover {
+            background: rgba(255,255,255,0.28);
+            border-color: rgba(255,255,255,0.4);
+            color: #ffe69e;
+        }
+        #mg_log:active { transform: scale(0.95); }
+
+        /* 日志弹窗 */
+        dialog {
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.4);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            position: fixed;
+            margin: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(8px);
+            padding: 0;
+            z-index: 100;
+        }
+        #show_log { top: 10%; }
+        .log_viewer {
+            width: 400px;
+            max-width: 80vw;
+            padding: 20px 22px 18px 22px;
+        }
+        .log_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .log_time_display {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1e293b;
+        }
+        .log_counter {
+            background: #f1f5f9;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #475569;
+        }
+        .arrow_btn {
+            background: #f1f5f9;
+            border: none;
+            font-size: 1.2rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #334155;
+        }
+        .arrow_btn:hover { background: #cbd5e1; }
+        .arrow_btn:active { transform: scale(0.92); }
+        .log_body {
+            display: flex;
+            align-items: stretch;
+            gap: 10px;
+            margin-bottom: 20px;
+            min-height: 130px;
+        }
+        .log_content_preview {
+            flex: 1;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px 18px;
+            min-height: 120px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #0f172a;
+            border: 1px solid #e9edf2;
+        }
+        .log_actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 14px;
+            flex-wrap: wrap;
+        }
+        .action_btn {
+            padding: 6px 18px;
+            border-radius: 40px;
+            border: none;
+            background-color: #3b82f6;
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .action_btn:hover { background-color: #2563eb; transform: translateY(-1px); }
+        .action_btn.secondary {
+            background-color: #e2e8f0;
+            color: #1e293b;
+        }
+        .action_btn.secondary:hover { background-color: #cbd5e1; }
+
+        /* 编辑日志弹窗 */
+        #edit_log {
+            top: 25%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .edit_modal {
+            background: white;
+            border-radius: 28px;
+            width: 500px;
+            max-width: 92vw;
+            padding: 28px 30px 24px 30px;
+        }
+        .edit_modal h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .edit_modal label {
+            font-weight: 500;
+            display: block;
+            margin: 14px 0 6px;
+            color: #0f172a;
+            font-size: 0.9rem;
+        }
+        .edit_modal input,
+        .edit_modal textarea {
+            border: 1.5px solid #d1d9e6;
+            border-radius: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 14px;
+            margin: 0;
+            background: #fafbfc;
+        }
+        .edit_modal input:focus,
+        .edit_modal textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+        }
+        .edit_modal textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+        .modal_buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        .modal_buttons button {
+            padding: 8px 24px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .save_btn {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .save_btn:hover { background-color: #2563eb; }
+        .cancel_btn {
+            background-color: #e2e8f0;
+            color: #1e293b;
+        }
+        .cancel_btn:hover { background-color: #cbd5e1; }
+        /* ==================== 日志 CSS 结束 ==================== */
     </style>
+
+    <!-- ===== 新增：从 Session 获取当前用户信息，注入为 JavaScript 变量 ===== -->
+    <%
+        bean.users.Users currentUser = util.LoginManager.getLoginUser(request);
+        boolean isLoggedIn = (currentUser != null);
+        boolean isAdmin = isLoggedIn && currentUser.isAdmin();
+        boolean isGuest = isLoggedIn && currentUser.getId() != null && currentUser.getId() < 0;
+        String userJson = "{ \"id\": " + (isLoggedIn ? currentUser.getId() : "null") +
+                ", \"username\": \"" + (isLoggedIn ? currentUser.getUsername() : "") + "\"" +
+                ", \"admin\": " + isAdmin +
+                ", \"isGuest\": " + isGuest +
+                ", \"loggedIn\": " + isLoggedIn + " }";
+    %>
+    <script>
+        window.currentUser = <%= userJson %>;
+        window.isAdmin = window.currentUser.admin;
+        window.isGuest = window.currentUser.isGuest;
+        window.isLoggedIn = window.currentUser.loggedIn;
+    </script>
 </head>
 <body>
 <div class="stage" id="stage">
-    <img id="hero" src="resources/img/home.png" alt="background">
+    <img id="hero" src="resources/img/home.gif" alt="background">
+
+    <!-- ===== 新增装饰卡片（与登录页面一致） ===== -->
+    <div class="scenery" id="scenery"></div>
+
+    <!-- ===== 日志预览框 ===== -->
+    <div id="logBox">
+        <div class="logPreviewBox">
+            <span class="log-preview-time" id="previewTime">📅 暂无日志</span>
+            <div class="log-preview-body" id="previewContent">没有日志，请点击下方按钮添加</div>
+            <div class="log-preview-footer">
+                <span class="log-count-badge" id="previewCount">共 0 条</span>
+                <button type="button" id="mg_log">📄 展示日志</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 日志弹窗（查看全部、翻页、添加、删除） ===== -->
+    <dialog id="show_log">
+        <div class="log_viewer">
+            <div class="log_header">
+                <span class="log_time_display">暂无日志</span>
+                <button type="button" class="arrow_btn left_arrow">◀</button>
+                <span class="log_counter">0 / 0</span>
+                <button type="button" class="arrow_btn right_arrow">▶</button>
+            </div>
+            <div class="log_body">
+                <div class="log_content_preview">这里展示日志正文内容</div>
+            </div>
+            <div class="log_actions">
+                <button type="button" id="add_log" class="action_btn">＋ 添加日志</button>
+                <button type="button" id="delete_current_log" class="action_btn secondary">🗑 删除当前</button>
+                <button type="button" id="closeshowlog" class="action_btn secondary">关闭</button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- ===== 编辑日志弹窗（添加/编辑） ===== -->
+    <dialog id="edit_log">
+        <div class="edit_modal">
+            <h3 id="modalTitle">📝 编辑日志</h3>
+            <label>📅 时间</label>
+            <input type="datetime-local" id="logTimeInput" step="1">
+            <label>📄 正文</label>
+            <textarea id="logContentInput" placeholder="写点什么..."></textarea>
+            <div class="modal_buttons">
+                <button type="button" class="cancel_btn" id="cancelModalBtn">取消</button>
+                <button type="button" class="save_btn" id="saveModalBtn">✅ 保存</button>
+            </div>
+        </div>
+    </dialog>
+
     <div class="computer" id="computer" title="点击进入电脑"></div>
 
     <div id="fullscreenModal">
@@ -1387,9 +1774,17 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="extra-info-box" id="extraBox">
+                            <div class="extra-inner">
+                                <span class="extra-title">公告</span>
+                                <p class="extra-content">功能不多，简单一点就好</p>
+                            </div>
+                        </div>
+
                         <div class="right-floating-bar" id="rightFloatingBar">
                             <div class="right-inner">
-                                <span class="stats-title">📊 博客统计</span>
+                                <span class="stats-title">博客统计</span>
                                 <div class="stats-list">
                                     <div class="stat-item">
                                         <span class="stat-label">文章总数</span>
@@ -1461,13 +1856,12 @@
     </div>
 
     <div id="toastMsg" class="toast-message"></div>
-    <button id="toggleHotspotBtn">🔲 隐藏热区</button>
 </div>
 
 <script>
     /* ============================================================
-     *  社交链接配置
-     *  ============================================================ */
+    *  社交链接配置
+    *  ============================================================ */
     const SOCIAL_LINKS = {
         copyrightUrl: '#',
         qqUin: '000000',
@@ -1479,48 +1873,18 @@
      *  SVG 图标定义
      *  ============================================================ */
     const SVG_ICONS = {
-        eye: `<svg viewBox="0 0 24 24">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-            <circle cx="12" cy="12" r="3"/>
-          </svg>`,
-        heartOutline: `<svg viewBox="0 0 24 24">
-                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                           fill="none"
-                           stroke="currentColor"
-                           stroke-width="2"
-                           stroke-linecap="round"
-                           stroke-linejoin="round"/>
-                   </svg>`,
-        heartFilled: `<svg viewBox="0 0 24 24">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                          fill="currentColor"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"/>
-                  </svg>`,
-        message: `<svg viewBox="0 0 24 24">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>`,
-        calendar: `<svg viewBox="0 0 24 24">
-                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                 <line x1="16" y1="2" x2="16" y2="6"/>
-                 <line x1="8" y1="2" x2="8" y2="6"/>
-                 <line x1="3" y1="10" x2="21" y2="10"/>
-               </svg>`
+        eye: `<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
+        heartOutline: `<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        heartFilled: `<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        message: `<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+        calendar: `<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`
     };
 
     /* ============================================================
      *  锚定布局引擎
      *  ============================================================ */
-    function createCoverAnchorLayout(backgroundImage,
-                                     stage,
-                                     target,
-                                     anchor,
-                                     options) {
-        if (!backgroundImage || !stage || !target) {
-            return null;
-        }
+    function createCoverAnchorLayout(backgroundImage, stage, target, anchor, options) {
+        if (!backgroundImage || !stage || !target) return null;
         options = options || {};
         const ax = anchor.ax;
         const ay = anchor.ay;
@@ -1531,9 +1895,7 @@
         function layout() {
             const iw = backgroundImage.naturalWidth;
             const ih = backgroundImage.naturalHeight;
-            if (!iw || !ih) {
-                return;
-            }
+            if (!iw || !ih) return;
             const vw = window.innerWidth;
             const vh = window.innerHeight;
             const scale = Math.max(vw / iw, vh / ih);
@@ -1542,94 +1904,62 @@
             target.style.left = (dx + ax * scale + offsetX) + 'px';
             target.style.top = (dy + ay * scale + offsetY) + 'px';
             target.style.transform = 'scale(' + scale + ')';
-            if (typeof onUpdate === 'function') {
-                onUpdate(scale, dx, dy);
-            }
+            if (typeof onUpdate === 'function') onUpdate(scale, dx, dy);
         }
-
         function bindEvents() {
-            if (backgroundImage.complete) {
-                layout();
-            }
+            if (backgroundImage.complete) layout();
             backgroundImage.addEventListener('load', layout);
             window.addEventListener('resize', layout);
         }
-
         function unbindEvents() {
             backgroundImage.removeEventListener('load', layout);
             window.removeEventListener('resize', layout);
         }
-
         bindEvents();
-
         return {
             layout: layout,
             bindEvents: bindEvents,
             unbindEvents: unbindEvents,
             updateOptions: function(newOptions) {
-                if (newOptions.offsetX !== undefined) {
-                    offsetX = newOptions.offsetX;
-                }
-                if (newOptions.offsetY !== undefined) {
-                    offsetY = newOptions.offsetY;
-                }
-                if (newOptions.onUpdate !== undefined) {
-                    onUpdate = newOptions.onUpdate;
-                }
+                if (newOptions.offsetX !== undefined) offsetX = newOptions.offsetX;
+                if (newOptions.offsetY !== undefined) offsetY = newOptions.offsetY;
+                if (newOptions.onUpdate !== undefined) onUpdate = newOptions.onUpdate;
                 layout();
             }
         };
     }
 
     /* ============================================================
-     *  初始化
+     *  主逻辑
      *  ============================================================ */
     (function() {
+        const APP_CTX = (typeof ctx === 'string' && ctx) ? ctx : '/MyWeb';
+
         let stage = document.getElementById('stage');
         let hero = document.getElementById('hero');
         let computer = document.getElementById('computer');
-        if (!stage || !hero || !computer) {
-            return;
-        }
+        if (!stage || !hero || !computer) return;
 
         let computerLocker = createCoverAnchorLayout(hero, stage, computer, { ax: 963, ay: 142 }, {});
         window.computerLocker = computerLocker;
 
-        // 热区逻辑
+        // 热区绑定
         (function initHotspot() {
             let HOTSPOT = { x: 10, y: 10, width: 880, height: 570 };
-            let hotspotVisual = document.createElement('div');
-            hotspotVisual.id = 'hotspotVisual';
-            hotspotVisual.style.cssText = 'left:' + HOTSPOT.x + 'px; top:' + HOTSPOT.y + 'px; width:' + HOTSPOT.width + 'px; height:' + HOTSPOT.height + 'px;';
-            computer.appendChild(hotspotVisual);
-
-            let isVisible = true;
             computer.addEventListener('mousemove', function(e) {
                 let scale = 1;
                 let match = computer.style.transform.match(/scale\(([\d.]+)\)/);
                 if (match) scale = parseFloat(match[1]);
-
                 let rect = computer.getBoundingClientRect();
                 let mx = (e.clientX - rect.left) / scale;
                 let my = (e.clientY - rect.top) / scale;
-                let inside = mx >= HOTSPOT.x && mx <= HOTSPOT.x + HOTSPOT.width && my >= HOTSPOT.y && my <= HOTSPOT.y + HOTSPOT.height;
-
+                let inside = mx >= HOTSPOT.x && mx <= HOTSPOT.x + HOTSPOT.width &&
+                    my >= HOTSPOT.y && my <= HOTSPOT.y + HOTSPOT.height;
                 computer.classList.toggle('computer-hover', inside);
-                hotspotVisual.classList.toggle('active', inside);
             });
             computer.addEventListener('mouseleave', function() {
                 computer.classList.remove('computer-hover');
-                hotspotVisual.classList.remove('active');
             });
-
-            let toggleBtn = document.getElementById('toggleHotspotBtn');
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', function() {
-                    isVisible = !isVisible;
-                    hotspotVisual.style.display = isVisible ? 'block' : 'none';
-                    toggleBtn.textContent = isVisible ? '🔲 隐藏热区' : '🔳 显示热区';
-                });
-            }
         })();
 
         let modal = document.getElementById('fullscreenModal');
@@ -1644,28 +1974,52 @@
         let blogContainer = document.getElementById('blogContainerModal');
         let backToHomeBtn = document.getElementById('backToHomeBtn');
 
-        let modalContentLocker = createCoverAnchorLayout(modalBg, computerWindow, modalContent, { ax: 274, ay: 44 }, {
-            onUpdate: function() {
-                homeIcon.style.left = '41px';
-                homeIcon.style.top = '50px';
-                blogIconModal.style.left = '41px';
-                blogIconModal.style.top = '254px';
-                homeIcon.style.transform = 'scale(1)';
-                blogIconModal.style.transform = 'scale(1)';
-                updateBlogAnchor();
+        let modalContentLocker = createCoverAnchorLayout(
+            modalBg,
+            computerWindow,
+            modalContent,
+            { ax: 274, ay: 44 },
+            {
+                onUpdate: function() {
+                    homeIcon.style.left = '41px';
+                    homeIcon.style.top = '50px';
+                    blogIconModal.style.left = '41px';
+                    blogIconModal.style.top = '254px';
+                    homeIcon.style.transform = 'scale(1)';
+                    blogIconModal.style.transform = 'scale(1)';
+                    updateBlogAnchor();
+                }
             }
-        });
+        );
 
-        let bottomBarLocker = createCoverAnchorLayout(modalBg, computerWindow, bottomBarContainer, { ax: 274, ay: 911 }, {
-            onUpdate: function() {
-                closeBtn.style.left = '10px';
-                closeBtn.style.top = '0px';
-                closeBtn.style.transform = '';
-                footTime.style.left = '1300px';
-                footTime.style.top = '0px';
-                footTime.style.transform = '';
+        let bottomBarLocker = createCoverAnchorLayout(
+            modalBg,
+            computerWindow,
+            bottomBarContainer,
+            { ax: 274, ay: 911 },
+            {
+                onUpdate: function() {
+                    closeBtn.style.left = '10px';
+                    closeBtn.style.top = '0px';
+                    closeBtn.style.transform = '';
+                    footTime.style.left = '1300px';
+                    footTime.style.top = '0px';
+                    footTime.style.transform = '';
+                }
             }
-        });
+        );
+
+        // 日志预览框锚定
+        let previewBox = document.getElementById('logBox');
+        if (previewBox) {
+            createCoverAnchorLayout(hero, stage, previewBox, { ax: -2, ay: 618 }, { offsetX: 0, offsetY: 0 });
+        }
+
+        // ===== 新增：装饰卡片锚定（与登录页面一致） =====
+        let scenery = document.getElementById('scenery');
+        if (scenery) {
+            createCoverAnchorLayout(hero, stage, scenery, { ax: 0, ay: 0 }, { offsetX: 0, offsetY: 0 });
+        }
 
         function updateBlogAnchor() {
             if (blogContainer) {
@@ -1689,7 +2043,8 @@
         let timerId = null;
         function updateTime() {
             let now = new Date();
-            footTime.textContent = now.getFullYear() + '/' +
+            footTime.textContent =
+                now.getFullYear() + '/' +
                 String(now.getMonth() + 1).padStart(2, '0') + '/' +
                 String(now.getDate()).padStart(2, '0') + '   ' +
                 String(now.getHours()).padStart(2, '0') + ':' +
@@ -1731,21 +2086,19 @@
         function closeModal() {
             modal.style.display = 'none';
             stopTimeUpdate();
-            if (blogContainer.classList.contains('active')) {
-                exitBlog();
-            }
+            if (blogContainer.classList.contains('active')) exitBlog();
         }
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
         });
 
+        // 社交链接与头像
         function initSocialLinks() {
             let copyrightIcon = document.getElementById('copyrightIcon');
             let qqIcon = document.getElementById('qqIcon');
             let githubIcon = document.getElementById('githubIcon');
             let emailIcon = document.getElementById('emailIcon');
-
             if (copyrightIcon) {
                 copyrightIcon.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -1769,6 +2122,7 @@
                 avatarImg.style.display = 'block';
                 if (avatarFallback) avatarFallback.style.display = 'none';
             }
+            if (!avatarWrapper) return;
             avatarWrapper.addEventListener('click', function() {
                 let input = document.createElement('input');
                 input.type = 'file';
@@ -1802,6 +2156,7 @@
             exitDetailViewSilent();
             renderPosts();
         }
+
         function exitBlog() {
             blogContainer.classList.remove('active');
             blogContainer.style.display = 'none';
@@ -1811,64 +2166,73 @@
         }
 
         homeIcon.addEventListener('click', function(e) { e.stopPropagation(); });
-        blogIconModal.addEventListener('click', function(e) { e.stopPropagation(); enterBlog(); });
-        backToHomeBtn.addEventListener('click', function(e) { e.stopPropagation(); exitBlog(); });
+        blogIconModal.addEventListener('click', function(e) {
+            e.stopPropagation();
+            enterBlog();
+        });
+        backToHomeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            exitBlog();
+        });
 
-        /* ==============================
-           评论者昵称 - 后端接口预留
-           ============================== */
-        function getCurrentUserNickname() {
-            // TODO: 可接 /user/me
-            return "墨隅";
+        function formatDateTimeCN(value) {
+            if (!value) return '未知';
+            let s = String(value).trim().replace('T', ' ');
+            s = s.replace(/\.\d+$/, '');
+            let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})\s+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?$/);
+            if (m) {
+                let y = m[1];
+                let mon = String(parseInt(m[2], 10));
+                let d = String(parseInt(m[3], 10));
+                let hh = String(parseInt(m[4], 10)).padStart(2, '0');
+                let mm = String(parseInt(m[5], 10)).padStart(2, '0');
+                let ss = String(parseInt(m[6] || '0', 10)).padStart(2, '0');
+                return y + '/' + mon + '/' + d + ' ' + hh + ':' + mm + ':' + ss;
+            }
+            let dt = new Date(s);
+            if (!isNaN(dt.getTime())) {
+                return dt.getFullYear() + '/' + (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' +
+                    String(dt.getHours()).padStart(2, '0') + ':' +
+                    String(dt.getMinutes()).padStart(2, '0') + ':' +
+                    String(dt.getSeconds()).padStart(2, '0');
+            }
+            return s;
         }
 
-        /* ==============================
-           后端 API（按你给的 Servlet 接口）
-           ============================== */
         const BLOG_API = {
-            posts: '/posts',
-            comments: '/comments',
-            likes: '/likes'
+            posts: APP_CTX + '/posts',
+            comments: APP_CTX + '/comments',
+            likes: APP_CTX + '/likes'
         };
 
-        function withCredentialsDefault(options) {
-            let opt = Object.assign({}, options || {});
-            if (!opt.headers) opt.headers = {};
-            if (!opt.headers['Content-Type']) opt.headers['Content-Type'] = 'application/json';
-            if (!opt.credentials) opt.credentials = 'include'; // 兼容基于 cookie/session 的登录
-            return opt;
+        function safeJSONParse(text) {
+            try { return JSON.parse(text); } catch (_) { return null; }
         }
 
         async function requestJSON(url, options) {
-            const resp = await fetch(url, withCredentialsDefault(options));
-            let data = null;
-            const ct = resp.headers.get('content-type') || '';
-            if (ct.indexOf('application/json') >= 0) {
-                data = await resp.json();
-            } else {
-                // 某些 writeOk 可能不是标准 json content-type，也尽量尝试解析
-                const txt = await resp.text();
-                try { data = JSON.parse(txt); } catch (e) { data = { ok: resp.ok, message: txt }; }
+            const opt = Object.assign({ credentials: 'same-origin' }, options || {});
+            if (opt.body && (!opt.headers || !opt.headers['Content-Type'])) {
+                opt.headers = Object.assign({}, opt.headers || {}, {
+                    'Content-Type': 'application/json;charset=UTF-8'
+                });
             }
+            const resp = await fetch(url, opt);
+            const raw = await resp.text();
+            const data = safeJSONParse(raw);
             if (!resp.ok) {
-                const msg = (data && (data.message || data.msg)) ? (data.message || data.msg) : ('HTTP ' + resp.status);
-                const err = new Error(msg);
-                err.status = resp.status;
-                err.data = data;
-                throw err;
+                const msg = (data && (data.message || data.msg || data.error)) ||
+                    ('请求失败（' + resp.status + '）');
+                throw new Error(msg);
             }
-            return data;
+            return data != null ? data : {};
         }
 
-        /* ==============================
-           数据转换（后端 -> 前端视图）
-           ============================== */
         function normalizeComment(c) {
             return {
                 id: c && c.id !== undefined ? c.id : Date.now() + Math.floor(Math.random() * 1000),
-                author: c && (c.author || c.username) ? (c.author || c.username) : '匿名',
-                content: c && c.content ? c.content : '',
-                date: c && (c.date || c.createdAt || c.createTime) ? (c.date || c.createdAt || c.createTime) : ''
+                author: (c && (c.author || c.username)) ? (c.author || c.username) : '匿名',
+                content: (c && c.content) ? c.content : '',
+                date: formatDateTimeCN(c && (c.date || c.createdAt || c.createTime || c.created_at))
             };
         }
 
@@ -1877,23 +2241,20 @@
                 id: p.id,
                 title: p.title || '无题',
                 content: p.content || '',
-                createdAt: p.createdAt || p.createTime || p.created_at || '',
-                updatedAt: p.updatedAt || p.updateTime || p.updated_at || '',
-                views: p.views || 0,
-                likes: p.likes || p.likeCount || 0,
+                createdAt: formatDateTimeCN(p.createdAt || ''),
+                updatedAt: formatDateTimeCN(p.updatedAt || ''),
+                views: (p.viewsCount != null ? p.viewsCount : (p.views || 0)),
+                likes: (p.likesCount != null ? p.likesCount : (p.likes || p.likeCount || 0)),
+                commentsCount: (p.commentsCount != null ? p.commentsCount : (Array.isArray(p.comments) ? p.comments.length : 0)),
                 liked: !!(p.liked || p.likedByCurrentUser),
                 comments: Array.isArray(p.comments) ? p.comments.map(normalizeComment) : []
             };
         }
 
-        /* ==============================
-           文章数据管理（后端）
-           ============================== */
         let posts = [];
 
         async function loadPosts() {
             try {
-                // 对接 PostServlet.doGet 列表：GET /posts?limit=...&offset=...
                 const list = await requestJSON(BLOG_API.posts + '?limit=50&offset=0', { method: 'GET' });
                 posts = Array.isArray(list) ? list.map(normalizePost) : [];
             } catch (e) {
@@ -1904,7 +2265,6 @@
         }
 
         async function loadPostDetail(postId) {
-            // 对接 PostServlet.doGet 详情：GET /posts?id=...
             const detail = await requestJSON(BLOG_API.posts + '?id=' + encodeURIComponent(postId), { method: 'GET' });
             return normalizePost(detail);
         }
@@ -1930,6 +2290,34 @@
         let currentDetailPostId = null;
         let currentEditingPostId = null;
 
+        // ----- 权限判断辅助函数 -----
+        function canWrite() {
+            return window.isAdmin === true;
+        }
+        function canEditDelete() {
+            return window.isAdmin === true;
+        }
+        function canLike() {
+            return window.isLoggedIn === true && window.isGuest === false;
+        }
+        function canComment() {
+            return window.isLoggedIn === true && window.isGuest === false;
+        }
+
+        // ----- 根据权限显示/隐藏“写文章”按钮 -----
+        function updateFloatingButtonVisibility() {
+            if (floatingNewPostBtn) {
+                if (canWrite()) {
+                    floatingNewPostBtn.style.display = '';
+                    floatingNewPostBtn.disabled = false;
+                } else {
+                    floatingNewPostBtn.style.display = 'none';
+                    floatingNewPostBtn.disabled = true;
+                }
+            }
+        }
+
+        // ----- 渲染文章列表 -----
         function renderPosts() {
             if (!postsContainer) return;
             if (posts.length === 0) {
@@ -1946,7 +2334,7 @@
                         '<div class="post-meta">' +
                         '<span>' + SVG_ICONS.eye + ' ' + (post.views || 0) + '</span>' +
                         '<span>' + SVG_ICONS.heartOutline + ' ' + (post.likes || 0) + '</span>' +
-                        '<span>' + SVG_ICONS.message + ' ' + (post.comments ? post.comments.length : 0) + '</span>' +
+                        '<span>' + SVG_ICONS.message + ' ' + (post.commentsCount || 0) + '</span>' +
                         '<span>' + SVG_ICONS.calendar + ' ' + escapeHtml(post.createdAt || '未知') + '</span>' +
                         '</div>' +
                         '</div>' +
@@ -1955,14 +2343,13 @@
                 postsContainer.innerHTML = html;
             }
             updateStats();
+            updateFloatingButtonVisibility();
         }
 
+        // ----- 显示文章详情（根据权限隐藏并禁用操作）-----
         async function showPostDetail(postId) {
             try {
-                // 每次进详情都请求后端（可拿到 views+1、最新评论、liked 状态）
                 let post = await loadPostDetail(postId);
-
-                // 同步到 posts 缓存
                 let idx = posts.findIndex(function(p) { return p.id === postId; });
                 if (idx >= 0) posts[idx] = post;
                 else posts.push(post);
@@ -1988,12 +2375,18 @@
                     return '<span class="no-comments">暂无评论，来抢沙发吧~</span>';
                 }
 
+                let showEditDelete = canEditDelete();
+                let showLike = canLike();
+                let showCommentBox = canComment();
+
                 let html = '';
                 html += '<div class="detail-nav">';
-                html += '  <span class="detail-title">' + escapeHtml(post.title) + '</span>';
+                html += '  <span class="detail-title">' + escapeHtml(post.title || '无题') + '</span>';
                 html += '  <div class="detail-actions">';
-                html += '    <button class="btn-edit-detail" id="detailEditBtn" data-id="' + post.id + '">编辑</button>';
-                html += '    <button class="btn-delete-detail" id="detailDeleteBtn" data-id="' + post.id + '">🗑️删除</button>';
+                if (showEditDelete) {
+                    html += '    <button class="btn-edit-detail" id="detailEditBtn" data-id="' + post.id + '">编辑</button>';
+                    html += '    <button class="btn-delete-detail" id="detailDeleteBtn" data-id="' + post.id + '">🗑️删除</button>';
+                }
                 html += '  </div>';
                 html += '  <button class="btn-back" id="backToListBtn"><svg viewBox="0 0 24 24" style="width:16px;height:16px;vertical-align:middle;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>返回列表</button>';
                 html += '</div>';
@@ -2005,93 +2398,120 @@
                 html += '</div>';
                 html += '<div class="detail-scroll-area">';
                 html += '  <div class="detail-content">' + (post.content || '') + '</div>';
-                html += '  <div class="likes-section"><button id="likeActionBtn" class="' + likeBtnClass + '">' + likeBtnText + '</button></div>';
+                if (showLike) {
+                    html += '  <div class="likes-section"><button id="likeActionBtn" class="' + likeBtnClass + '">' + likeBtnText + '</button></div>';
+                }
                 html += '  <div class="comments-section"><h4>评论 · 留言</h4><div class="comment-list" id="commentListArea">' + buildCommentsHtml() + '</div></div>';
                 html += '</div>';
-                html += '<div class="add-comment-bottom">';
-                html += '  <textarea id="commentContentInput" placeholder="写下你的想法..." rows="1"></textarea>';
-                html += '  <button id="submitCommentBtn" class="btn-submit-comment">发表评论</button>';
-                html += '</div>';
+                if (showCommentBox) {
+                    html += '<div class="add-comment-bottom">';
+                    html += '  <textarea id="commentContentInput" placeholder="写下你的想法..." rows="1"></textarea>';
+                    html += '  <button id="submitCommentBtn" class="btn-submit-comment">发表评论</button>';
+                    html += '</div>';
+                } else {
+                    html += '<div class="add-comment-bottom" style="border-top: none; padding-top: 0;">';
+                    html += '  <span style="font-size:14px; color:#8aaec9;">登录后可评论</span>';
+                    html += '</div>';
+                }
 
                 detailView.innerHTML = html;
                 detailView.classList.add('active');
 
+                // 绑定事件
                 document.getElementById('backToListBtn').addEventListener('click', exitDetailView);
-                document.getElementById('detailEditBtn').addEventListener('click', function() {
-                    openEditModalForPost(parseInt(this.getAttribute('data-id')));
-                });
-                document.getElementById('detailDeleteBtn').addEventListener('click', function() {
-                    deletePost(parseInt(this.getAttribute('data-id')));
-                });
 
-                document.getElementById('likeActionBtn').addEventListener('click', function() {
-                    toggleLike(post.id);
-                });
-
-                let submitCommentBtn = document.getElementById('submitCommentBtn');
-                let commentTextarea = document.getElementById('commentContentInput');
-
-                async function submitComment() {
-                    let content = commentTextarea.value.trim();
-                    if (!content) {
-                        showToast('请输入评论内容');
-                        return;
-                    }
-
-                    try {
-                        // 对接 CommentServlet.doPost: POST /comments { postId, content }
-                        let res = await requestJSON(BLOG_API.comments, {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                postId: post.id,
-                                content: content
-                            })
-                        });
-
-                        // doPost 返回 {ok:true,id:...}，为拿 author/date，重新拉详情最稳
-                        let latest = await loadPostDetail(post.id);
-                        let idx2 = posts.findIndex(function(p) { return p.id === post.id; });
-                        if (idx2 >= 0) posts[idx2] = latest;
-                        post = latest;
-
-                        let commentListArea = document.getElementById('commentListArea');
-                        if (commentListArea) commentListArea.innerHTML = (function() {
-                            if (post.comments && post.comments.length > 0) {
-                                return post.comments.map(function(c) {
-                                    return '<div class="comment-item">' +
-                                        '<span class="comment-author">' + escapeHtml(c.author || '匿名') + '</span>' +
-                                        '<span class="comment-date">' + escapeHtml(c.date || '') + '</span>' +
-                                        '<span class="comment-text">' + escapeHtml(c.content || '') + '</span>' +
-                                        '</div>';
-                                }).join('');
-                            }
-                            return '<span class="no-comments">暂无评论，来抢沙发吧~</span>';
-                        })();
-
-                        let metaComments = document.querySelector('.detail-meta span:last-child');
-                        if (metaComments) metaComments.innerHTML = SVG_ICONS.message + ' 评论 ' + (post.comments ? post.comments.length : 0);
-
-                        commentTextarea.value = '';
-                        commentTextarea.style.height = 'auto';
-                        showToast((res && res.ok) ? '评论发表成功！' : '评论已提交');
-                        renderPosts();
-                    } catch (e) {
-                        showToast(e.message || '评论发表失败');
-                        console.error(e);
-                    }
+                if (showEditDelete) {
+                    document.getElementById('detailEditBtn').addEventListener('click', function() {
+                        if (!canEditDelete()) {
+                            showToast('无权限编辑文章');
+                            return;
+                        }
+                        openEditModalForPost(parseInt(this.getAttribute('data-id'), 10));
+                    });
+                    document.getElementById('detailDeleteBtn').addEventListener('click', function() {
+                        if (!canEditDelete()) {
+                            showToast('无权限删除文章');
+                            return;
+                        }
+                        deletePost(parseInt(this.getAttribute('data-id'), 10));
+                    });
                 }
 
-                submitCommentBtn.addEventListener('click', submitComment);
-                commentTextarea.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' && e.ctrlKey) {
-                        e.preventDefault();
-                        submitComment();
+                if (showLike) {
+                    document.getElementById('likeActionBtn').addEventListener('click', function() {
+                        if (!canLike()) {
+                            showToast('请先登录');
+                            return;
+                        }
+                        toggleLike(post.id);
+                    });
+                }
+
+                if (showCommentBox) {
+                    let submitCommentBtn = document.getElementById('submitCommentBtn');
+                    let commentTextarea = document.getElementById('commentContentInput');
+
+                    async function submitComment() {
+                        if (!canComment()) {
+                            showToast('请先登录');
+                            return;
+                        }
+                        let content = commentTextarea.value.trim();
+                        if (!content) {
+                            showToast('请输入评论内容');
+                            return;
+                        }
+                        try {
+                            await requestJSON(BLOG_API.comments, {
+                                method: 'POST',
+                                body: JSON.stringify({
+                                    postId: post.id,
+                                    content: content
+                                })
+                            });
+                            let latest = await loadPostDetail(post.id);
+                            let idx2 = posts.findIndex(function(p) { return p.id === post.id; });
+                            if (idx2 >= 0) posts[idx2] = latest;
+                            post = latest;
+
+                            let commentListArea = document.getElementById('commentListArea');
+                            if (commentListArea) {
+                                commentListArea.innerHTML = (post.comments && post.comments.length > 0)
+                                    ? post.comments.map(function(c) {
+                                        return '<div class="comment-item">' +
+                                            '<span class="comment-author">' + escapeHtml(c.author || '匿名') + '</span>' +
+                                            '<span class="comment-date">' + escapeHtml(c.date || '') + '</span>' +
+                                            '<span class="comment-text">' + escapeHtml(c.content || '') + '</span>' +
+                                            '</div>';
+                                    }).join('')
+                                    : '<span class="no-comments">暂无评论，来抢沙发吧~</span>';
+                            }
+                            let metaComments = document.querySelector('.detail-meta span:last-child');
+                            if (metaComments) {
+                                metaComments.innerHTML = SVG_ICONS.message + ' 评论 ' + (post.comments ? post.comments.length : 0);
+                            }
+                            commentTextarea.value = '';
+                            commentTextarea.style.height = 'auto';
+                            showToast('评论发表成功！');
+                            renderPosts();
+                        } catch (e) {
+                            showToast(e.message || '评论发表失败');
+                            console.error(e);
+                        }
                     }
-                });
-                commentTextarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = this.scrollHeight + 'px';
-                });
+
+                    submitCommentBtn.addEventListener('click', submitComment);
+                    commentTextarea.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' && e.ctrlKey) {
+                            e.preventDefault();
+                            submitComment();
+                        }
+                    });
+                    commentTextarea.addEventListener('input', function() {
+                        this.style.height = 'auto';
+                        this.style.height = this.scrollHeight + 'px';
+                    });
+                }
 
                 updateStats();
             } catch (e) {
@@ -2100,14 +2520,15 @@
             }
         }
 
+        // ----- 切换点赞 -----
         async function toggleLike(postId) {
             let post = posts.find(function(p) { return p.id === postId; });
             if (!post) return;
-
+            if (!canLike()) {
+                showToast('请先登录');
+                return;
+            }
             try {
-                // 对接 LikeServlet:
-                // - 点赞:   POST   /likes   body {postId}
-                // - 取消赞: DELETE /likes?postId=...
                 if (post.liked) {
                     await requestJSON(BLOG_API.likes + '?postId=' + encodeURIComponent(postId), {
                         method: 'DELETE'
@@ -2118,19 +2539,17 @@
                         body: JSON.stringify({ postId: postId })
                     });
                 }
-
-                // 点赞接口只回 ok，不回数量，重新拉详情刷新 likes/liked
                 let latest = await loadPostDetail(postId);
                 Object.assign(post, latest);
-
                 let likeBtn = document.getElementById('likeActionBtn');
                 if (likeBtn) {
                     likeBtn.className = post.liked ? 'btn-like liked' : 'btn-like';
-                    likeBtn.innerHTML = post.liked ? (SVG_ICONS.heartFilled + ' 已点赞') : (SVG_ICONS.heartOutline + ' 点赞');
+                    likeBtn.innerHTML = post.liked ? SVG_ICONS.heartFilled + ' 已点赞' : SVG_ICONS.heartOutline + ' 点赞';
                 }
                 let metaLikes = document.getElementById('detailMetaLikes');
-                if (metaLikes) metaLikes.innerHTML = SVG_ICONS.heartOutline + ' 点赞 ' + (post.likes || 0);
-
+                if (metaLikes) {
+                    metaLikes.innerHTML = SVG_ICONS.heartOutline + ' 点赞 ' + (post.likes || 0);
+                }
                 updateStats();
                 renderPosts();
             } catch (e) {
@@ -2139,29 +2558,38 @@
             }
         }
 
+        // ----- 退出详情 -----
         function exitDetailView() {
             detailView.classList.remove('active');
             detailView.innerHTML = '';
             postsContainer.style.display = 'block';
-            if (floatingNewPostBtn) floatingNewPostBtn.style.display = '';
+            updateFloatingButtonVisibility();
             postsArea.style.overflow = 'auto';
             currentDetailPostId = null;
+            renderPosts();
         }
 
         function exitDetailViewSilent() {
             detailView.classList.remove('active');
             detailView.innerHTML = '';
             postsContainer.style.display = 'block';
-            if (floatingNewPostBtn) floatingNewPostBtn.style.display = '';
+            updateFloatingButtonVisibility();
             postsArea.style.overflow = 'auto';
             currentDetailPostId = null;
+            renderPosts();
         }
 
+        // ----- 删除文章（仅管理员）-----
         async function deletePost(postId) {
+            if (!canEditDelete()) {
+                showToast('无权限删除文章');
+                return;
+            }
             if (!confirm('确定要删除这篇文章吗？此操作不可恢复。')) return;
             try {
-                // 对接 PostServlet.doDelete: DELETE /posts?id=...
-                await requestJSON(BLOG_API.posts + '?id=' + encodeURIComponent(postId), { method: 'DELETE' });
+                await requestJSON(BLOG_API.posts + '?id=' + encodeURIComponent(postId), {
+                    method: 'DELETE'
+                });
                 posts = posts.filter(function(p) { return p.id !== postId; });
                 showToast('文章已删除');
                 exitDetailView();
@@ -2172,14 +2600,16 @@
             }
         }
 
+        // 点击文章标题进入详情
         postsContainer.addEventListener('click', function(e) {
             let titleEl = e.target.closest('.post-title');
             if (titleEl) {
-                let id = parseInt(titleEl.getAttribute('data-id'));
+                let id = parseInt(titleEl.getAttribute('data-id'), 10);
                 if (!isNaN(id)) showPostDetail(id);
             }
         });
 
+        // ----- 统计信息更新 -----
         function updateStats() {
             let totalArticles = posts.length;
             let totalViews = posts.reduce(function(s, p) { return s + (p.views || 0); }, 0);
@@ -2189,18 +2619,17 @@
                 let sorted = posts.slice().sort(function(a, b) { return (b.id || 0) - (a.id || 0); });
                 lastUpdate = sorted[0].createdAt || '未知';
             }
-
-            let el1 = document.getElementById('statArticleCount');
-            let el2 = document.getElementById('statTotalViews');
-            let el3 = document.getElementById('statTotalLikes');
-            let el4 = document.getElementById('statLastUpdate');
-            if (el1) el1.textContent = totalArticles + ' 篇';
-            if (el2) el2.textContent = totalViews + ' 次';
-            if (el3) el3.textContent = totalLikes + ' 个';
-            if (el4) el4.textContent = lastUpdate;
+            let statArticleCount = document.getElementById('statArticleCount');
+            let statTotalViews = document.getElementById('statTotalViews');
+            let statTotalLikes = document.getElementById('statTotalLikes');
+            let statLastUpdate = document.getElementById('statLastUpdate');
+            if (statArticleCount) statArticleCount.textContent = totalArticles + ' 篇';
+            if (statTotalViews) statTotalViews.textContent = totalViews + ' 次';
+            if (statTotalLikes) statTotalLikes.textContent = totalLikes + ' 个';
+            if (statLastUpdate) statLastUpdate.textContent = lastUpdate;
         }
 
-        // ========== wangEditor 相关逻辑 ==========
+        // ----- 编辑器相关 -----
         let editor = null;
 
         function showToast(msg, dur) {
@@ -2214,19 +2643,43 @@
             }, dur || 2000);
         }
 
+        // ===== 修改后的 initEditor（已配置图片上传） =====
         function initEditor(initialContent) {
             if (editor) {
                 editor.destroy();
                 editor = null;
             }
-            const { createEditor, createToolbar } = window.wangEditor;
+            if (!window.wangEditor || !window.wangEditor.createEditor || !window.wangEditor.createToolbar) {
+                showToast('编辑器资源未加载');
+                return;
+            }
+
+            // 图片上传配置（适配您的 /uploadImage 接口）
+            const uploadConfig = {
+                server: APP_CTX + '/uploadImage',
+                fieldName: 'image',
+                allowedTypes: ['image/*'],
+                maxFileSize: 10 * 1024 * 1024,
+                timeout: 10000,
+                customInsert: function(res, insertFn) {
+                    if (res.errno === 0 && res.data && res.data.url) {
+                        insertFn(res.data.url);
+                    } else {
+                        console.error('图片上传失败：', res);
+                        showToast('图片上传失败：' + (res.message || '未知错误'));
+                    }
+                }
+            };
 
             const editorConfig = {
                 placeholder: '开始撰写文章...',
-                autoFocus: false
+                autoFocus: false,
+                MENU_CONF: {
+                    uploadImage: uploadConfig
+                }
             };
 
-            editor = createEditor({
+            editor = window.wangEditor.createEditor({
                 selector: '#editor-container',
                 config: editorConfig,
                 html: initialContent || ''
@@ -2236,8 +2689,8 @@
                 excludeKeys: ['emotion', 'todo', 'insertTable', 'insertVideo']
             };
 
-            createToolbar({
-                editor,
+            window.wangEditor.createToolbar({
+                editor: editor,
                 selector: '#toolbar-container',
                 config: toolbarConfig
             });
@@ -2251,14 +2704,22 @@
         }
 
         function openEditModal() {
+            if (!canWrite()) {
+                showToast('无权限发表文章');
+                return;
+            }
             currentEditingPostId = null;
             document.getElementById('editTitleInput').value = '';
             document.getElementById('editModalTitle').innerText = '写新文章';
             document.getElementById('editModal').classList.add('active');
-            requestAnimationFrame(() => initEditor(''));
+            requestAnimationFrame(function() { initEditor(''); });
         }
 
         async function openEditModalForPost(postId) {
+            if (!canEditDelete()) {
+                showToast('无权限编辑文章');
+                return;
+            }
             let post = posts.find(function(p) { return p.id === postId; });
             if (!post) {
                 try {
@@ -2273,7 +2734,7 @@
             document.getElementById('editTitleInput').value = post.title || '';
             document.getElementById('editModalTitle').innerText = '编辑文章';
             document.getElementById('editModal').classList.add('active');
-            requestAnimationFrame(() => initEditor(post.content || ''));
+            requestAnimationFrame(function() { initEditor(post.content || ''); });
         }
 
         function closeEditModal() {
@@ -2283,21 +2744,22 @@
         }
 
         async function savePost() {
+            if (!canWrite()) {
+                showToast('无权限保存文章');
+                return;
+            }
             if (!editor) {
                 showToast('编辑器尚未就绪');
                 return;
             }
-
             let title = document.getElementById('editTitleInput').value.trim();
             let content = editor.getHtml().trim();
             if (!title && !content) {
                 showToast('标题和内容不能都为空');
                 return;
             }
-
             try {
                 if (currentEditingPostId !== null) {
-                    // 对接 PostServlet.doPut：PUT /posts body {id,title,content}
                     await requestJSON(BLOG_API.posts, {
                         method: 'PUT',
                         body: JSON.stringify({
@@ -2308,7 +2770,6 @@
                     });
                     showToast('文章更新成功！');
                 } else {
-                    // 对接 PostServlet.doPost：POST /posts body {title,content}
                     await requestJSON(BLOG_API.posts, {
                         method: 'POST',
                         body: JSON.stringify({
@@ -2318,18 +2779,13 @@
                     });
                     showToast('文章发布成功！');
                 }
-
                 await loadPosts();
                 closeEditModal();
                 renderPosts();
-
                 if (currentDetailPostId !== null) {
                     let still = posts.find(function(p) { return p.id === currentDetailPostId; });
-                    if (still) {
-                        showPostDetail(currentDetailPostId);
-                    } else {
-                        exitDetailView();
-                    }
+                    if (still) showPostDetail(currentDetailPostId);
+                    else exitDetailView();
                 }
                 currentEditingPostId = null;
             } catch (e) {
@@ -2338,26 +2794,324 @@
             }
         }
 
-        document.getElementById('floatingNewPostBtn').addEventListener('click', function(e) {
-            e.stopPropagation();
-            openEditModal();
-        });
-        document.getElementById('saveEditBtn').addEventListener('click', function(e) {
-            e.stopPropagation();
-            savePost();
-        });
-        document.getElementById('closeEditModalBtn').addEventListener('click', closeEditModal);
-        document.getElementById('cancelEditBtn').addEventListener('click', closeEditModal);
+        // 绑定浮动按钮
+        let floatingBtn = document.getElementById('floatingNewPostBtn');
+        if (floatingBtn) {
+            floatingBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                openEditModal();
+            });
+        }
+
+        // 保存按钮
+        let saveEditBtn = document.getElementById('saveEditBtn');
+        if (saveEditBtn) {
+            saveEditBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                savePost();
+            });
+        }
+
+        let closeEditModalBtn = document.getElementById('closeEditModalBtn');
+        if (closeEditModalBtn) closeEditModalBtn.addEventListener('click', closeEditModal);
+
+        let cancelEditBtn = document.getElementById('cancelEditBtn');
+        if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditModal);
+
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('editModal').classList.contains('active')) {
+            let editModal = document.getElementById('editModal');
+            if (e.key === 'Escape' && editModal && editModal.classList.contains('active')) {
                 closeEditModal();
             }
         });
 
+        // 初始化加载文章
         (async function initPosts() {
             await loadPosts();
             renderPosts();
         })();
+
+    })();
+
+    /* ==================== 日志功能补充 JS ==================== */
+    (function() {
+        const APP_CTX = (typeof ctx === 'string' && ctx) ? ctx : '/MyWeb';
+
+        var show_log = document.getElementById('show_log');
+        var edit_log = document.getElementById('edit_log');
+        var mg_log = document.getElementById('mg_log');
+        var add_log = document.getElementById('add_log');
+        var closeshowlog = document.getElementById('closeshowlog');
+        var cancelModalBtn = document.getElementById('cancelModalBtn');
+        var saveModalBtn = document.getElementById('saveModalBtn');
+
+        var logTimeDisplay = document.querySelector('.log_time_display');
+        var logContentPreview = document.querySelector('.log_content_preview');
+        var logCounter = document.querySelector('.log_counter');
+        var leftArrow = document.querySelector('.left_arrow');
+        var rightArrow = document.querySelector('.right_arrow');
+
+        var logTimeInput = document.getElementById('logTimeInput');
+        var logContentInput = document.getElementById('logContentInput');
+
+        var previewTime = document.getElementById('previewTime');
+        var previewContent = document.getElementById('previewContent');
+        var previewCount = document.getElementById('previewCount');
+
+        var logsData = [];
+        var currentLogIndex = 0;
+
+        async function fetchLogs() {
+            try {
+                var res = await fetch(APP_CTX + '/logs?limit=50&offset=0');
+                if (!res.ok) throw new Error('获取日志失败');
+                var data = await res.json();
+                logsData = data.map(function(item) {
+                    return { id: item.id, time: item.time, content: item.content };
+                });
+                if (logsData.length > 0) currentLogIndex = 0;
+                renderAll();
+            } catch (e) {
+                console.error('Fetch logs error:', e);
+                logsData = [];
+                renderAll();
+            }
+        }
+
+        async function addLogToServer(time, content) {
+            try {
+                var res = await fetch(APP_CTX + '/logs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+                    body: JSON.stringify({ time: time, content: content })
+                });
+                var result = await res.json();
+                if (result.ok) {
+                    logsData.unshift({ id: result.id, time: time, content: content });
+                    currentLogIndex = 0;
+                    renderAll();
+                    return true;
+                } else {
+                    alert(result.error || '添加失败，请检查输入');
+                    return false;
+                }
+            } catch (e) {
+                console.error('Add log error:', e);
+                alert('网络错误，请重试');
+                return false;
+            }
+        }
+
+        async function deleteLogFromServer(id) {
+            if (!id) {
+                alert('该日志 ID 无效，无法删除');
+                return;
+            }
+            try {
+                var res = await fetch(APP_CTX + '/logs?id=' + id, { method: 'DELETE' });
+                var result = await res.json();
+                if (result.ok) {
+                    var index = logsData.findIndex(function(log) { return log.id === id; });
+                    if (index > -1) {
+                        logsData.splice(index, 1);
+                        if (currentLogIndex >= logsData.length) currentLogIndex = logsData.length - 1;
+                        if (logsData.length === 0) currentLogIndex = 0;
+                        renderAll();
+                    }
+                } else {
+                    alert(result.error || '删除失败');
+                }
+            } catch (e) {
+                console.error('Delete log error:', e);
+                alert('网络错误，请重试');
+            }
+        }
+
+        function renderAll() {
+            if (!Array.isArray(logsData) || logsData.length === 0) {
+                if (previewTime) previewTime.textContent = '📅 暂无日志';
+                if (previewContent) previewContent.textContent = '没有日志，请点击下方按钮添加';
+                if (previewCount) previewCount.textContent = '共 0 条';
+                if (logTimeDisplay) logTimeDisplay.textContent = '暂无日志';
+                if (logContentPreview) logContentPreview.textContent = '没有日志，请点击"添加日志"添加';
+                if (logCounter) logCounter.textContent = '0 / 0';
+                return;
+            }
+            var first = logsData[0];
+            var displayTime = first.time ? first.time.replace('T', ' ') : '未知时间';
+            if (previewTime) previewTime.textContent = '📅 ' + displayTime;
+            if (previewContent) previewContent.textContent = first.content || '（空内容）';
+            if (previewCount) previewCount.textContent = '共 ' + logsData.length + ' 条';
+            if (currentLogIndex >= logsData.length) currentLogIndex = logsData.length - 1;
+            if (currentLogIndex < 0) currentLogIndex = 0;
+            var log = logsData[currentLogIndex];
+            if (!log) return;
+            var formattedTime = log.time.replace('T', ' ');
+            if (logTimeDisplay) logTimeDisplay.textContent = formattedTime;
+            if (logContentPreview) logContentPreview.textContent = log.content;
+            if (logCounter) logCounter.textContent = (currentLogIndex + 1) + ' / ' + logsData.length;
+        }
+
+        function prevLog() {
+            if (!logsData.length) return;
+            currentLogIndex = (currentLogIndex - 1 + logsData.length) % logsData.length;
+            renderAll();
+        }
+        function nextLog() {
+            if (!logsData.length) return;
+            currentLogIndex = (currentLogIndex + 1) % logsData.length;
+            renderAll();
+        }
+
+        if (mg_log) {
+            mg_log.addEventListener('click', function() {
+                show_log.showModal();
+                renderAll();
+            });
+        }
+        if (leftArrow) leftArrow.addEventListener('click', prevLog);
+        if (rightArrow) rightArrow.addEventListener('click', nextLog);
+
+        if (add_log) {
+            add_log.addEventListener('click', function() {
+                edit_log.showModal();
+            });
+        }
+        if (closeshowlog) {
+            closeshowlog.addEventListener('click', function() {
+                show_log.close();
+            });
+        }
+        if (cancelModalBtn) {
+            cancelModalBtn.addEventListener('click', function() {
+                edit_log.close();
+            });
+        }
+        if (saveModalBtn) {
+            saveModalBtn.addEventListener('click', async function() {
+                var newTime = logTimeInput.value;
+                var newContent = logContentInput.value;
+                if (!newTime || !newContent.trim()) {
+                    alert("请填写完整的时间和正文内容");
+                    return;
+                }
+                var success = await addLogToServer(newTime, newContent);
+                if (success) {
+                    edit_log.close();
+                    if (show_log.open) renderAll();
+                }
+            });
+        }
+
+        var deleteLogBtn = document.getElementById('delete_current_log');
+        if (deleteLogBtn) {
+            deleteLogBtn.addEventListener('click', function(e) {
+                e.stopPropagation?.();
+                if (!logsData.length) {
+                    alert('没有日志可删除');
+                    return;
+                }
+                var log = logsData[currentLogIndex];
+                if (!log || !log.id) {
+                    alert('无法获取当前日志 ID');
+                    return;
+                }
+                var confirmDelete = confirm(
+                    '确定要删除这条日志吗？\n时间：' + (log.time?.replace('T', ' ') || '未知') +
+                    '\n正文预览：' + (log.content || '').substring(0, 50) +
+                    ((log.content || '').length > 50 ? '…' : '')
+                );
+                if (!confirmDelete) return;
+                deleteLogFromServer(log.id);
+            });
+        }
+
+        fetchLogs();
+
+        var DRAFT_API = APP_CTX + '/draft';
+
+        async function saveDraft() {
+            var payload = {
+                time: logTimeInput.value || null,
+                content: logContentInput.value || ""
+            };
+            try {
+                await fetch(DRAFT_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+                    body: JSON.stringify(payload),
+                    credentials: 'same-origin'
+                });
+            } catch (_) {}
+        }
+
+        async function loadDraftToInputs() {
+            try {
+                var r = await fetch(DRAFT_API, { credentials: 'same-origin' });
+                if (!r.ok) return;
+                var data = await r.json();
+                if (data && data.time != null) logTimeInput.value = data.time;
+                if (data && data.content != null) logContentInput.value = data.content;
+            } catch (_) {}
+        }
+
+        if (add_log) {
+            var newAddLogHandler = async function(e) {
+                await loadDraftToInputs();
+                edit_log.showModal();
+            };
+            var oldAddLog = document.getElementById('add_log');
+            if (oldAddLog) {
+                var newAddLog = oldAddLog.cloneNode(true);
+                oldAddLog.parentNode.replaceChild(newAddLog, oldAddLog);
+                newAddLog.addEventListener('click', newAddLogHandler);
+                add_log = newAddLog;
+            }
+        }
+
+        var draftTimer = null;
+        function scheduleDraftSave() {
+            clearTimeout(draftTimer);
+            draftTimer = setTimeout(function() {
+                saveDraft().catch(function() {});
+            }, 350);
+        }
+        if (logTimeInput) logTimeInput.addEventListener('input', scheduleDraftSave);
+        if (logContentInput) logContentInput.addEventListener('input', scheduleDraftSave);
+
+        window.addEventListener('beforeunload', function() {
+            try {
+                var payload = JSON.stringify({
+                    time: logTimeInput.value || null,
+                    content: logContentInput.value || ""
+                });
+                var blob = new Blob([payload], { type: 'application/json;charset=UTF-8' });
+                navigator.sendBeacon(DRAFT_API, blob);
+            } catch (_) {}
+        });
+
+        document.addEventListener('click', async function(e) {
+            var a = e.target.closest && e.target.closest('a');
+            if (!a) return;
+            var href = a.getAttribute('href');
+            if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+            var url;
+            try {
+                url = new URL(href, location.href);
+            } catch (_) {
+                return;
+            }
+            if (url.origin !== location.origin) return;
+            e.preventDefault();
+            try {
+                await saveDraft();
+            } catch (_) {}
+            location.href = url.href;
+        }, true);
+
+        window.logsData = logsData;
+        window.renderAllLogs = renderAll;
+        window.fetchLogs = fetchLogs;
     })();
 </script>
 </body>
